@@ -1,0 +1,41 @@
+.flexboxheader{
+    display: flex;
+    justify-content: space-between;
+    background-color: #CEE5D0;
+    color: #5E454B;
+    height: 100px;
+}
+.flexboxheader h1{
+    vertical-align: middle;
+    
+}
+.flexboxheader a::before{
+    content: "\f2bd";
+    
+}
+.flexboxIndex{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 50px;
+    margin: 50px 0px; 
+
+}
+.flexboxIndex img{
+    height: auto;
+    max-width: 500px;
+    width: 90%;
+}
+.flexboxIndex .presentation{
+    max-width: 900px;
+    width: 90%;
+    height: auto;
+}
+.form-perso{
+    background-color: lightblue;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 20px;
+    width: 350px;
+    height: auto;
+}
