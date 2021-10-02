@@ -2,6 +2,8 @@
 session_start();
 
 require_once "./controllers/pdoConnexion.php";
+require_once "./controllers/functionAuthenticate.php";
+valid_email($pdo);
 
 
 

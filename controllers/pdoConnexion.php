@@ -1,6 +1,6 @@
 <?php
 try{
-$dsn = 'mysql:host=localhost;dbname=mediatheques';
+$dsn = 'mysql:host=localhost;dbname=mediatheque';
 $username = 'root';
 $password = '';
 
@@ -10,7 +10,7 @@ $pdo = new PDO($dsn, $username, $password);
     try{
         $dsni = 'mysql:host=localhost';
         $pdp = new PDO($dsni, $username, $password);
-        $requete = "CREATE DATABASE IF NOT EXISTS `mediatheques` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
+        $requete = "CREATE DATABASE IF NOT EXISTS `mediatheque` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
         
         $pdp->prepare($requete)->execute();
         echo "base de donée créée";
@@ -30,7 +30,8 @@ $pdo = new PDO($dsn, $username, $password);
             date_of_birth DATE NOT NULL,
             password VARCHAR(255) NOT NULL,
             role VARCHAR(255) NOT NULL DEFAULT "habitant",
-            validity BOOLEAN DEFAULT 0
+            validity BOOLEAN DEFAULT 0,
+            verify_email BOOLEAN DEFAULT 0
         )';
         $pdo->prepare($usercreate)->execute();
         echo '<br>table utilisateur creés';
