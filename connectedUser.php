@@ -2,6 +2,7 @@
 session_start();
 require_once "./controllers/pdoConnexion.php";
 require_once "./controllers/functionAuthenticate.php";
+require_once "./controllers/search.php";
 
 valid_email($pdo);
 // On verifie que l'utilisateur est bien connecté
@@ -28,9 +29,11 @@ require_once "./models/header.php";
             <label for="contactForm1">Votre email</label>
             <input type="text" class="form-control" id="contactForm1" name="email" required>
         </div>
-        <div class="form-group pt-2">
-            <button class="btn btn-success" type="submit">Se connecter</button>
-        </div>
+        <?php
+            $search = new Search('*', '');
+            $search->select_genre($pdo); 
+        ?>
+        
             
     </form>
 

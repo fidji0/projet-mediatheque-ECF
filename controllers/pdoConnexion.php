@@ -47,7 +47,7 @@ $pdo = new PDO($dsn, $username, $password);
             descriptions VARCHAR(255) NOT NULL,
             publication_date DATE NULL,
             auteur VARCHAR(255) NOT NULL,
-            dipo VARCHAR(255) NOT NULL DEFAULT "disponible",
+            dispo VARCHAR(255) NOT NULL DEFAULT "disponible",
             genre VARCHAR(255) NOT NULL
 
                     )';
