@@ -21,38 +21,49 @@ function createUser($pdo){
 
 
     if (!empty($_POST)){
-
+        
         if(check_mdp_format($_POST['password'])){
+            if($_POST['password'] === $_POST['password2']){
+                $firstname = htmlspecialchars($_POST['firstname']);
+                $surname = htmlspecialchars($_POST['surname']);
+                $email = htmlspecialchars($_POST['email']);
+                $adress = htmlspecialchars($_POST['adress']);
+                $zipcode = htmlspecialchars($_POST['zipcode']);
+                $city = htmlspecialchars($_POST['city']);
+                $date_of_birth = htmlspecialchars($_POST['date_of_birth']);
+                $password = password_hash(htmlspecialchars($_POST['password']),PASSWORD_BCRYPT);      
+                
+                
+                if($firstname && $surname && $email && $date_of_birth && $password){
+                
+                    try{ 
+                        $addUser = "INSERT INTO habitant (firstname , surname, adress, zipcode, city, email , date_of_birth, password) VALUES ('$firstname' , '$surname', '$adress', '$zipcode', '$city' , '$email', '$date_of_birth', '$password') ";
+                        $pdo->prepare($addUser)->execute();
+                        echo '<div class="alert alert-success" role="alert">
+                                Votre demande à bien été transmise vous allez recevoir un mail de confirmation.
+                                Merci de cliquer sur le lien afin de valider votre adresse email.
+                            </div>';
 
-            $firstname = htmlspecialchars($_POST['firstname']);
-            $surname = htmlspecialchars($_POST['surname']);
-            $email = htmlspecialchars($_POST['email']);
-            $date_of_birth = htmlspecialchars($_POST['date_of_birth']);
-            $password = password_hash(htmlspecialchars($_POST['password']),PASSWORD_BCRYPT);      
-            
-            
-            if($firstname && $surname && $email && $date_of_birth && $password){
-            
-                try{ 
-                    $addUser = "INSERT INTO habitant (firstname , surname, email , date_of_birth, password) VALUES ('$firstname' , '$surname', '$email', '$date_of_birth', '$password') ";
-                    $pdo->prepare($addUser)->execute();
-                    echo '<div class="alert alert-success" role="alert">
-                            Votre demande à bien été transmise vous allez recevoir un mail de confirmation.
-                            Merci de cliquer sur le lien afin de valider votre adresse email.
-                        </div>';
-
-                    mail_confirm();
-                    }
-                catch(PDOException $e){
-                    if($e->errorInfo[0] === '23000'){
-                        echo '<div class="alert alert-danger" role="alert">
-                        L\'adresse email est déja utilisé!
-                        </div>';
+                        mail_confirm();
+                        }
+                    catch(PDOException $e){
+                        if($e->errorInfo[0] === '23000'){
+                            echo '<div class="alert alert-danger" role="alert">
+                            L\'adresse email est déja utilisé!
+                            </div>';
+                        }
+                        echo '<pre>';
+                        var_dump($e);
+                        echo '</pre>';
                     }
                 }
-            }
-            else{
-                echo 'merci de remplir tout les champs';
+                else{
+                    echo 'merci de remplir tout les champs';
+                }
+            }else{
+                echo '<div class="alert alert-danger" role="alert">
+            Vous n\'avez pas saisie deux fois le même mot de passe
+            </div>';
             }
         }else{
             echo '<div class="alert alert-danger" role="alert">
@@ -81,7 +92,7 @@ function authenticateUser($pdo){
             if(isset($result) && $email === $result['email']){
                 
                 //On vérifie que l'utilisateur à été validé par un employer
-                if ($result[0]['validity'] !== '0'){
+                if ($result['validity'] !== '0'){
                     
                     //On Verifie que le mot de passe correspond au hash
                     if(password_verify($password, $result['password'])){
@@ -165,4 +176,43 @@ function mail_confirm(){
 
     mail($to, $subject, $message, $header);
     echo $message;
+}
+// on cherche a valider le compte de l'utilisateur manuelement
+function validity_accept($pdo){
+    
+    if(!empty($_POST)){
+        $email = $_POST['email'];
+        $request= "UPDATE habitant SET validity = '1' WHERE email = '$email'";
+        $pdo->query($request);
+        
+    }
+}
+
+function verify_validity($pdo){
+    validity_accept($pdo);
+    $request = 'SELECT surname , firstname , email , adress ,  city , zipcode FROM habitant WHERE validity = 0 AND verify_email = 1';
+    $results = $pdo->query($request)->fetchAll(PDO::FETCH_ASSOC);
+    
+    
+    $count = count($results);
+    
+        echo '<div id="madiv">';
+    for($i = 0 ; $i < $count ; $i++){
+        
+        echo '<div style="padding : 25px 25px;">';
+    foreach($results[$i] as $key => $result){
+        echo ''.$key.' : '.$result.'<br>
+        ';
+    }
+    
+    echo '<form action="./employerDashboard.php" method="post" >
+    <input type="text" style="display : none;" name="email" value="'.$results[$i]['email'].'">
+    <div>
+    <button class="btn btn-success" type="submit" name="validity" value="1">Valider l\'utilisateur</button>
+    </div>
+    </form>';
+    echo '</div>';
+}
+echo '</div>';
+    
 }

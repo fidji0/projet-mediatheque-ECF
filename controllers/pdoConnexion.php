@@ -26,6 +26,9 @@ $pdo = new PDO($dsn, $username, $password);
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
             firstname VARCHAR(255) NOT NULL,
             surname VARCHAR(255) NOT NULL,
+            adress VARCHAR(255) NOT NULL,
+            zipcode INTEGER NOT NULL,
+            city VARCHAR(255) NOT NULL,
             email VARCHAR(255) NOT NULL UNIQUE,
             date_of_birth DATE NOT NULL,
             password VARCHAR(255) NOT NULL,
@@ -44,7 +47,8 @@ $pdo = new PDO($dsn, $username, $password);
             descriptions VARCHAR(255) NOT NULL,
             publication_date DATE NULL,
             auteur VARCHAR(255) NOT NULL,
-            dipo VARCHAR(255) NOT NULL DEFAULT "disponible"
+            dipo VARCHAR(255) NOT NULL DEFAULT "disponible",
+            genre VARCHAR(255) NOT NULL
 
                     )';
         $pdo->prepare($bookcreate)->execute();

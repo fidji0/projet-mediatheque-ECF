@@ -55,3 +55,6 @@ require_once "./models/header.php";
 <?php
 var_dump($_SESSION);
 require_once "./models/footer.php";
+if($_GET['disconnected'] == 1){
+    session_unset();
+}

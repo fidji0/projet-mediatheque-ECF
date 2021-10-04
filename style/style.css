@@ -9,10 +9,7 @@
     vertical-align: middle;
     
 }
-.flexboxheader a::before{
-    content: "\f2bd";
-    
-}
+
 .flexboxIndex{
     display: flex;
     flex-wrap: wrap;
