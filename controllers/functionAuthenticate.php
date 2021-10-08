@@ -85,8 +85,10 @@ function authenticateUser($pdo){
         if($email !== "" && $password !== ""){
 
             //On lance la requete et on récupère la ligne de la base de donnée
-            $requete = "SELECT * FROM habitant WHERE email = '$email'";
-            $result = $pdo->query($requete)->fetch((PDO::FETCH_ASSOC));
+            $requete = "SELECT * FROM habitant WHERE email = ?";
+            $r = $pdo->prepare($requete);
+            $r->execute(array($email));
+            $result = $r->fetch(PDO::FETCH_ASSOC);
             
             // On vérifie que la BDD nous retourne bien un résultat et que l'email est bien identique
             if(isset($result) && $email === $result['email']){
@@ -177,13 +179,15 @@ function mail_confirm(){
     mail($to, $subject, $message, $header);
     echo $message;
 }
+
 // on cherche a valider le compte de l'utilisateur manuelement
 function validity_accept($pdo){
     
     if(!empty($_POST)){
         $email = $_POST['email'];
-        $request= "UPDATE habitant SET validity = '1' WHERE email = '$email'";
-        $pdo->query($request);
+        $request= "UPDATE habitant SET validity = '1' WHERE email = ?";
+        $r = $pdo->prepare($request);
+        $r->execute(array($email));
         
     }
 }
@@ -191,12 +195,15 @@ function validity_accept($pdo){
 function verify_validity($pdo){
     validity_accept($pdo);
     $request = 'SELECT surname , firstname , email , adress ,  city , zipcode FROM habitant WHERE validity = 0 AND verify_email = 1';
-    $results = $pdo->query($request)->fetchAll(PDO::FETCH_ASSOC);
+    $r = $pdo->query($request);
+    $r->execute();
+    $results = $r->fetchAll(PDO::FETCH_ASSOC);
+
     
     
     $count = count($results);
     
-        echo '<div id="madiv">';
+        echo '<div class="madiv">';
     for($i = 0 ; $i < $count ; $i++){
         
         echo '<div style="padding : 25px 25px;">';

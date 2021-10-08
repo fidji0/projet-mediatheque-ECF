@@ -44,11 +44,12 @@ $pdo = new PDO($dsn, $username, $password);
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
             title VARCHAR(255) NOT NULL,
             link_img VARCHAR(255) NULL,
-            descriptions VARCHAR(255) NOT NULL,
+            descriptions TEXT(60000) NOT NULL,
             publication_date DATE NULL,
             auteur VARCHAR(255) NOT NULL,
             dispo VARCHAR(255) NOT NULL DEFAULT "disponible",
-            genre VARCHAR(255) NOT NULL
+            genre VARCHAR(255) NOT NULL,
+            reserveid INTEGER NULL,
 
                     )';
         $pdo->prepare($bookcreate)->execute();
@@ -61,7 +62,8 @@ $pdo = new PDO($dsn, $username, $password);
             book INTEGER NOT NULL,
             reservation DATE NOT NULL,
             recuperation DATE NULL,
-            bookreturn DATE NULL
+            bookreturn DATE NULL,
+            statut VARCHAR(255) DEFAULT "reserved"
                     )';
 
         $pdo->prepare($reservation)->execute();

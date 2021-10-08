@@ -31,8 +31,9 @@ class Book{
                 $uploadfile = $uploaddir . uniqid() . basename($_FILES['image']['name']);
             
                 $addBook = "INSERT INTO book (title , link_img , descriptions , auteur, genre) VALUES (? , ?, ? , ?, ?) ";
+                
                 $result = $pdo->prepare($addBook);
-            
+
                 $result->execute(array($this->title , $uploadfile , $this->descriptions , $this->auteur, $this->genre));
 
                 if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadfile)) {

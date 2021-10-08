@@ -3,6 +3,11 @@ session_start();
 require_once "./controllers/pdoConnexion.php";
 require_once "./controllers/functionAuthenticate.php";
 require_once "./controllers/search.php";
+require_once "./controllers/Reservation.php";
+$search = new Search();
+$reserved = new Reservation();
+
+
 
 valid_email($pdo);
 // On verifie que l'utilisateur est bien connecté
@@ -16,29 +21,33 @@ $descriptionPage = "Bienvenue sur le site de la médiathèque de ..., nous somme
 require_once "./models/head.php";
 require_once "./models/header.php";
 ?>
-<main>
+<main class="mainConnected">
 <div class="flexboxIndex">
+
     <div>
         <img src="./vues/Img/bibliotheque.jpg" alt="">
     </div>
-    <div class="presentation">
-        <h2>Bienvenue sur le site de la bibliothèque</h2>
+    <div class="presentation align-center">
+        <h2>Bienvenue sur le site de la Médiathèque</h2>
         <form action="#" method="get" >
-      
-        <div class="form-group pt-2">
-            <label for="contactForm1">Votre email</label>
-            <input type="text" class="form-control" id="contactForm1" name="email" required>
-        </div>
-        <?php
-            $search = new Search('*', '');
-            $search->select_genre($pdo); 
-        ?>
-        
-            
-    </form>
-
     </div>
 </div>
+<div>
+
+</div>
+        <div class="container-book">
+        <?php
+            
+            $reserved->reserved_book($pdo);
+            $search->detail_book($pdo); 
+        ?>
+        </div>
+        
+            
+    
+
+    
+
 
 
 
@@ -63,7 +72,7 @@ require_once "./models/header.php";
 
 
 <?php
-var_dump($_GET);
+
 require_once "./models/footer.php";
 
 }
