@@ -22,17 +22,7 @@ require_once "./models/head.php";
 require_once "./models/header.php";
 ?>
 <main class="mainConnected">
-<div class="flexboxIndex">
 
-    <div>
-        <img src="./vues/Img/bibliotheque.jpg" alt="">
-    </div>
-    <div class="presentation align-center">
-        <h2>Bienvenue sur le site de la Médiathèque</h2>
-        <form action="#" method="get" >
-    </div>
-</div>
-<div>
 
 </div>
         <div class="container-book">

@@ -1,15 +1,23 @@
 .flexboxheader{
     display: flex;
-    justify-content: space-between;
-    background-color: #CEE5D0;
-    color: #5E454B;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: #316B83;
+    color: #D5BFBF;
     height: 100px;
 }
 .flexboxheader h1{
     vertical-align: middle;
     
 }
-
+a {
+    text-decoration: none;
+    color: inherit;
+    
+}
+a:hover {
+    color: inherit;
+}
 .flexboxIndex{
     display: flex;
     flex-wrap: wrap;
@@ -40,7 +48,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    background-color: #CEE5D0;
+    background-color: #8CA1A5;
     
 }
 .bgBook{
@@ -88,4 +96,7 @@
 }
 .tr-alert { 
     background-color : #EF907C;
+}
+.bg-navbar {
+    background-color: #D5BFBF;
 }

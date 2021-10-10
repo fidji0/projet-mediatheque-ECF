@@ -6,12 +6,29 @@ class Search{
 
    
     public function select_genre($pdo){
-        $request = "SELECT id ,link_img, title ,  descriptions, auteur, genre, dispo, publication_date  FROM book ";
+        $request = "SELECT COUNT(id) AS ctn FROM book ";
+        $d = $pdo->prepare($request);
+        $d->execute();
+        $count = $d->fetchAll(PDO::FETCH_ASSOC);
+
+        // creation de la pagination
+        $nbr_element_par_page = 1;
+        if (empty($_GET['page'])){
+            $_GET['page']=1;
+        }
+        $page = $_GET['page'];
+        $debut = ($_GET['page']-1)*$nbr_element_par_page;
+        $nombre_de_page = ceil($count[0]['ctn']/$nbr_element_par_page);
+        
+        
+       
+
+        $request = "SELECT id ,link_img, title ,  descriptions, auteur, genre, dispo, publication_date  FROM book LIMIT $nbr_element_par_page OFFSET $debut";
         
         if(!empty($_GET['search_book']) && $_GET['search_book'] === '1' && (!empty($_GET['title']) || !empty($_GET['genre']))){
             $request .= "WHERE genre LIKE ? AND  tile = ?";
             $r = $pdo->prepare($request);
-            $r->execute(array('%'.$_GET['title'].'%','%'.$_GET['genre'].'%',));
+            $r->execute(array('%'.$_GET['title'].'%','%'.$_GET['genre'].'%'));
         }else{
             $r = $pdo->prepare($request);
             $r->execute();
@@ -84,6 +101,58 @@ class Search{
             }
             echo '</form></div>';
         }   
+
+        echo '<div class="mt-5 "  style="width : 100%;"> 
+        <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link"
+        ';
+
+        // on redirige si le visiteur modifie manuelement la page dans l'url
+        if ($_GET['page'] < 1 || $_GET['page'] > $nombre_de_page){
+            header('Location: ./connectedUser.php?page=1');
+        }
+        // on renvoit a la page 1 si appuis sur precedent a la page 1
+        if ($_GET['page'] === 1){
+            echo 'href="?page=1">Precedente</a></li>';
+        }else{
+            echo ' href="?page='.($_GET['page']-1).'">Precedente</a></li>';
+        }
+        echo '<li><a class="page-link" href="?page=1"><<</a></li>';
+
+        // on boucle l'affichage des liens avec maximum 5 page à la fois
+        if (!empty($_GET['page']) && $_GET['page'] > 3 ){
+            $i= ($_GET['page']-2);
+        }else{
+            $i= 1 ;
+        }
+        if (!empty($_GET['page']) && ($_GET['page']+3) < $nombre_de_page ){
+            $fin = $_GET['page'] + 3;
+        }else{
+            $fin = $nombre_de_page;
+        }
+        for($i ; $i <= $fin ; $i++ ){
+            echo '<li class="';
+            if ($i == $_GET['page']){
+                echo ' active ';
+                
+            }
+            echo 'page-item"><a class="page-link" href="?page='.$i.'">'.$i.'</a></li>';
+            
+        }
+        echo '<li><a class="page-link" href="?page='.$nombre_de_page.'">>></a></li>';
+        echo '<li class="page-item"><a class="page-link" ';
+        
+        if ($_GET['page'] === $nombre_de_page){
+            echo 'href="?page='.$nombre_de_page.'">Suivante</a></li>';
+        }else{
+            echo ' href="?page='.($_GET['page']+1).'">Suivante</a></li>';
+        }
+        echo '</ul>
+            </nav>
+            </div>';
+        
+        
     }
     function detail_book($pdo){
         if(!empty($_GET['id'])){

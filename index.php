@@ -1,5 +1,9 @@
 <?php
 session_start();
+if($_GET['disconnected'] == 1){
+    session_unset();
+}
+
 require_once "./controllers/pdoConnexion.php";
 
 $title = "Bienvenue sur le site de la médiathèque de ...";
@@ -53,8 +57,5 @@ require_once "./models/header.php";
 
 
 <?php
-var_dump($_SESSION);
+
 require_once "./models/footer.php";
-if($_GET['disconnected'] == 1){
-    session_unset();
-}
