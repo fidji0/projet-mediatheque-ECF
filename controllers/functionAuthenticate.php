@@ -43,32 +43,35 @@ function createUser($pdo){
                                 Votre demande à bien été transmise vous allez recevoir un mail de confirmation.
                                 Merci de cliquer sur le lien afin de valider votre adresse email.
                             </div>';
+                            
 
                         mail_confirm();
+                        return true;
                         }
                     catch(PDOException $e){
                         if($e->errorInfo[0] === '23000'){
                             echo '<div class="alert alert-danger" role="alert">
                             L\'adresse email est déja utilisé!
                             </div>';
+                            return false;
                         }
-                        echo '<pre>';
-                        var_dump($e);
-                        echo '</pre>';
                     }
                 }
                 else{
                     echo 'merci de remplir tout les champs';
+                    return false;
                 }
             }else{
                 echo '<div class="alert alert-danger" role="alert">
             Vous n\'avez pas saisie deux fois le même mot de passe
             </div>';
+            return false;
             }
         }else{
             echo '<div class="alert alert-danger" role="alert">
             Le mot de passe doit contenir au minimum 8 caractères avec MAJUSCULE, minuscule et Chiffre!
             </div>';
+            return false;
         }
     }
 }
@@ -207,19 +210,37 @@ function verify_validity($pdo){
     for($i = 0 ; $i < $count ; $i++){
         
         echo '<div style="padding : 25px 25px;">';
-    foreach($results[$i] as $key => $result){
-        echo ''.$key.' : '.$result.'<br>
-        ';
+        foreach($results[$i] as $key => $result){
+            switch ($key){
+                case 'surname':
+                    echo '<div><p> Nom : '.$result.'</p></div>';
+                    break;
+                case 'firstaname':
+                    echo '<div><p> Prenom : '.$result.'</p></div>';
+                    break;
+                case 'email':
+                    echo '<div><p> Email : '.$result.'</p></div>';
+                    break;
+                case 'adress':
+                    echo '<div><p> Adresse : '.$result.'</p></div>';
+                    break;
+                case 'city':
+                    echo '<div><p> Ville : '.$result.'</p></div>';
+                    break;
+                case 'zipcode':
+                    echo '<div><p> Code Postal : '.$result.'</p></div>';
+                    break;
+            }
+        }
+        
+        echo '<form action="./employerDashboard.php" method="post" >
+        <input type="text" style="display : none;" name="email" value="'.$results[$i]['email'].'">
+        <div>
+        <button class="btn btn-success" type="submit" name="validity" value="1">Valider l\'utilisateur</button>
+        </div>
+        </form>';
+        echo '</div>';
     }
-    
-    echo '<form action="./employerDashboard.php" method="post" >
-    <input type="text" style="display : none;" name="email" value="'.$results[$i]['email'].'">
-    <div>
-    <button class="btn btn-success" type="submit" name="validity" value="1">Valider l\'utilisateur</button>
-    </div>
-    </form>';
     echo '</div>';
-}
-echo '</div>';
     
 }

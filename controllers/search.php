@@ -12,7 +12,7 @@ class Search{
         $count = $d->fetchAll(PDO::FETCH_ASSOC);
 
         // creation de la pagination
-        $nbr_element_par_page = 1;
+        $nbr_element_par_page = 5;
         if (empty($_GET['page'])){
             $_GET['page']=1;
         }
@@ -40,10 +40,11 @@ class Search{
         
             
         for($i = 0 ; $i < $count ; $i++){
-           
+       
             echo '
-            <div class="m-1 bgBook">
-            <form action="./connectedUser.php" method="get">';
+            <div class="bgBook">
+            <form class="width100" action="./connectedUser.php" method="get">';
+        
             $id = $results[$i]['id'];
             foreach($results[$i] as $key => $result){ 
                 if(!empty($result)){
@@ -79,18 +80,22 @@ class Search{
                         echo '<div class=" align-center"><p>Date de publication : '.$result.'</p></div>';
                         break;
                     case 'id':
+                        if(!empty($_GET['page'])){
+                            echo '<input class="p-2" type="text" style="display : none" name="page" value="'.$_GET['page'].'">';
+                        }
                         echo '<input class="" type="text" style="display : none" value="'.$result.'">';
+                        break;
                     case 'dispo':
                         if($result === 'disponible'){
-                            echo '<div class="pb-2 align-center"> <button class="btn btn-primary p-2" type="submit" name="dispo" value="'.$id.'" >Je réserve ce livre</button>
+                            echo '<div class="pb-2 align-center"> <button class="btn btn_perso p-2" type="submit" name="dispo" value="'.$id.'" >Je réserve ce livre</button>
                             </div>';
                         break;}
                         elseif($result === 'reserved'){
-                            echo '<div class="pb-2 align-center"><button class="btn btn-primary p-2" disabled="disabled" type="submit"  >Livre actuellement indisponible</button>
+                            echo '<div class="pb-2 align-center"><button class="btn btn_perso p-2" disabled="disabled" type="submit"  >Livre actuellement indisponible</button>
                             </div>';
                         break;}
                         elseif($result === 'emprunter'){
-                            echo '<div class="pb-2 align-center"><button class="btn btn-primary p-2" disabled="disabled" type="submit"  >Livre actuellement indisponible</button>
+                            echo '<div class="pb-2 align-center"><button class="btn btn_perso p-2" disabled="disabled" type="submit"  >Livre actuellement indisponible</button>
                             </div>';
                         }
                         break;
@@ -161,25 +166,29 @@ class Search{
             
 
                 $results = $pdo->query($request)->fetchAll(PDO::FETCH_ASSOC);
-                
-            
+                    
                 echo '
-                <div class="m-1 detailBook">
-                <form action="./connectedUser.php" method="get">';
+                <div class="width100 mb-5">
+                <form class="detailBook" action="./connectedUser.php" method="get">';
+                if (!empty($results[0]['link_img'])){
+                            
+                    echo '<div><div class="p-2"><img class="br20px" src="'.$results[0]['link_img'].'" height="auto" width="300px" alt=""></div></div>';
+            }
+                echo '<div>';
                 foreach($results[0] as $key => $result){ 
                     if(!empty($result)){
+                    
+                        
                     switch ($key) {
                         case 'title' :
-                                echo '<div class="flexBook"><div class="p-2 align-center">
+                                echo '<div ><div class="p-2 align-center">
                                 <h5>
                                 '.ucfirst($result).'
                                 </h5>
                                 </div>' ;
                             
                             break;
-                        case 'link_img':
-                            echo '<div class="p-2"><img class="br20px" src="'.$result.'" height="auto" width="300px" alt=""></div>';
-                            break;
+                        
                         case 'descriptions':
                             echo '<div class="p-2 "><p>'.ucfirst(stripslashes(nl2br($result))).'</p></div>';
                             break;
@@ -193,18 +202,22 @@ class Search{
                             echo '<div class="p-2"><p>Date de publication : '.$result.'</p></div>';
                             break;
                         case 'id':
+                            if(!empty($_GET['id'])){
+                                echo '<input class="p-2" type="text" style="display : none" name="id" value="'.$_GET['id'].'">';
+                            }
                             echo '<input class="p-2" type="text" style="display : none" value="'.$result.'">';
+                            break;
                         case 'dispo':
                             if($result === 'disponible'){
-                                echo '<div class="pb-2 align-center"> <button class="btn btn-primary p-2" type="submit" name="dispo" value="'.$id.'" >Je réserve ce livre</button>
+                                echo '<div class="pb-2 align-center"> <button class="btn btn_perso p-2" type="submit" name="dispo" value="'.$id.'" >Je réserve ce livre</button>
                                 </div>';
                             break;}
                             elseif($result === 'reserved'){
-                                echo '<div class="pb-2 align-center"><button class="btn btn-primary p-2" disabled="disabled" type="submit"  >Livre actuellement indisponible</button>
+                                echo '<div class="pb-2 align-center"><button class="btn btn_perso p-2" disabled="disabled" type="submit"  >Livre actuellement indisponible</button>
                                 </div>';
                             break;}
                             elseif($result === 'emprunter'){
-                                echo '<div class="pb-2 align-center"><button class="btn btn-primary p-2" disabled="disabled" type="submit"  >Livre actuellement indisponible</button>
+                                echo '<div class="pb-2 align-center"><button class="btn btn_perso p-2" disabled="disabled" type="submit"  >Livre actuellement indisponible</button>
                                 </div>';
                             }
                             break;

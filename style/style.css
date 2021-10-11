@@ -2,12 +2,21 @@
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    background-color: #316B83;
-    color: #D5BFBF;
+    background-color: #90AACB;
     height: 100px;
 }
 .flexboxheader h1{
     vertical-align: middle;
+    
+}
+.flexBook {
+    display: flex;
+    flex-wrap: nowrap;
+}
+.img_header {
+    width: 100%;
+    max-height: 250px;
+    opacity: 0.7;
     
 }
 a {
@@ -18,6 +27,33 @@ a {
 a:hover {
     color: inherit;
 }
+.flexboxDashboard{
+    display: flex;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.flexboxDashboard .button{
+    width: 300px;
+    height: 200px;
+    background-color: #90AACB;
+    
+    border-radius: 25px;
+    font-size: 3rem;
+}
+.flexboxDashboard button{
+    box-shadow: 15px 5px 5px #90AACB;
+}
+.btn-retard{
+    width: 300px;
+    height: 200px;
+    background-color: #EF907C;
+    font-size: 5rem;
+    border-radius: 25px;
+
+}
 .flexboxIndex{
     display: flex;
     flex-wrap: wrap;
@@ -25,6 +61,10 @@ a:hover {
     gap: 50px;
     margin: 50px 0px; 
 
+}
+.flexbox-forms{
+    display: flex;
+    justify-content: space-around;
 }
 .flexboxIndex img{
     height: auto;
@@ -48,11 +88,13 @@ a:hover {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    background-color: #8CA1A5;
+    background-color: #FEF1E6;
+    padding-top: 30px;
     
 }
 .bgBook{
-    background-color: white;
+    background-color: #F9D5A7;
+    margin-top: 50px;
     border-radius: 20px;
     height: auto;
     width: 315px;
@@ -79,6 +121,9 @@ a:hover {
     width: 90%;
     margin: 0px 5%;
 }
+.width100 {
+    width: 100%;
+}
 .container-validation-recuperation{
     display: flex;
     flex-wrap: wrap;
@@ -98,5 +143,45 @@ a:hover {
     background-color : #EF907C;
 }
 .bg-navbar {
-    background-color: #D5BFBF;
+    background-color: #FFB085;
+}
+.btn_perso {
+    background-color: #90AACB;
+}
+.presentation {
+
+    margin: 30px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-around;
+}
+.welcome {
+    font-size: 1.5rem;
+    vertical-align: middle;
+    margin: 30px;
+    display: flex;
+    align-items: baseline;
+}
+.presentation h2{
+    font-size: 3rem;
+    text-align: center;
+}
+.presentation p{
+    font-size: 1.5rem;
+    vertical-align: middle;
+}
+@media (max-width: 700px) { 
+    .detailBook{
+        display: flex;
+        flex-wrap: wrap;
+        background-color: white;
+        border-radius: 20px;
+        height: auto;
+        width: 90%;
+        margin: 0px 5%;
+    }
+}
+.text-little {
+    font-size: 0.9rem;
+    font-style: italic;
 }

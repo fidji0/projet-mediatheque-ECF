@@ -11,8 +11,9 @@ valid_email($pdo);
 require_once "./models/head.php";
 require_once "./models/header.php";
 
+echo '<div class="flexbox-forms">';
 require_once "./models/add_user_form.php";
-
+echo '</div>';
 
 
 

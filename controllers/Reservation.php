@@ -152,6 +152,7 @@ class Reservation{
                 echo '<tr>
                 <div class="m-1 ">
                 <form class="container-validation-recuperation" action="" method="get">';
+                
                 foreach($result[$i] as $key => $return){
                     if(!empty($result)){
                         switch ($key) {
@@ -171,6 +172,14 @@ class Reservation{
                                 echo '<td style="display : none"><input class="" type="text" style="display : none" name="book" value="'.$return.'"></td>';
                                 break;
                             case 'id':
+                                if(!empty($_GET['search_valid']) && $_GET['search_valid'] === '1' && (!empty($_GET['title']) || !empty($_GET['auteur'])
+                                || !empty($_GET['surname']) || !empty($_GET['firstname']))){
+                                    echo '<input type="text" style="display : none" name="search_valid" value="'.$_GET['search_valid'].'">
+                                    <input type="text" style="display : none" name="title" value="'.$_GET['title'].'">
+                                    <input type="text" style="display : none" name="auteur" value="'.$_GET['auteur'].'">
+                                    <input type="text" style="display : none" name="surname" value="'.$_GET['surname'].'">
+                                    <input type="text" style="display : none" name="firstname" value="'.$_GET['firstname'].'">';
+                                }
                                 echo '<td><div class="pb-2 align-center"> <button class="btn btn-primary p-2" type="submit" name="reservid" value="'.$return.'" >Je valide la récupération du livre</button>
                                 </div></td>';
                                 break;
@@ -235,6 +244,7 @@ class Reservation{
                     <input class="form-control" type="text" name="title"  placeholder="Titre">
                 </td>
                 <td>
+                    <input type="text" style="display : none" name="retour" value="'.$_GET['retour'].'">
                     <input class="form-control" type="text" name="auteur"  placeholder="Auteur">
                 </td>           
                 <td>
@@ -281,6 +291,16 @@ class Reservation{
                                 echo '<td><div class="align-center"><h5>'.ucfirst($return).' </h5></div></td>';
                             break;
                             case 'id':
+                                if(!empty($_GET['search_return']) && $_GET['search_return'] === '1' && ((!empty($_GET['title']) || !empty($_GET['auteur'])
+                                || !empty($_GET['surname']) || !empty($_GET['firstname']) || !empty($_GET['email'])))){
+                                    echo '<input type="text" style="display : none" name="search_return" value="'.$_GET['search_return'].'">
+                                    <input type="text" style="display : none" name="title" value="'.$_GET['title'].'">
+                                    <input type="text" style="display : none" name="auteur" value="'.$_GET['auteur'].'">
+                                    <input type="text" style="display : none" name="surname" value="'.$_GET['surname'].'">
+                                    <input type="text" style="display : none" name="firstname" value="'.$_GET['firstname'].'">
+                                    <input type="text" style="display : none" name="email" value="'.$_GET['email'].'">
+                                    <input type="text" style="display : none" name="retour" value="'.$_GET['retour'].'">';
+                                }
                                 echo '<td><div class="pb-2 align-center"> <button class="btn btn-primary p-2" type="submit" name="returnid" value="'.$return.'" >Je valide le retour du livre</button>
                                 </div></td>';
                                 break;
@@ -352,4 +372,18 @@ class Reservation{
         echo '</pre>';
     }
     
+    public function en_retard($pdo){
+        $request = "SELECT H.surname , H.firstname , H.email ,  B.title , B.auteur , R.id , DATEDIFF ( DATE(NOW()) , recuperation) AS d
+        FROM habitant AS H INNER JOIN book AS B INNER JOIN reservation AS R 
+        WHERE R.reader = H.id AND R.book = B.id AND R.statut = 'emprunter' AND B.dispo = 'emprunter'";
+
+
+        $request .= "ORDER BY R.recuperation";
+        $r = $pdo->prepare($request);
+        $r->execute();
+        
+        $result = $r->fetchAll();
+        $count = count($result);
+        echo $count;
+    }
 }
