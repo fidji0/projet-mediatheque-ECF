@@ -194,7 +194,18 @@ function validity_accept($pdo){
         
     }
 }
+function en_attente($pdo){
+    $request = 'SELECT surname , firstname , email , adress ,  city , zipcode FROM habitant WHERE validity = 0 AND verify_email = 1';
+    $r = $pdo->query($request);
+    $r->execute();
+    $results = $r->fetchAll(PDO::FETCH_ASSOC);
 
+    
+    
+    $count = count($results);
+
+    echo $count;
+}
 function verify_validity($pdo){
     validity_accept($pdo);
     $request = 'SELECT surname , firstname , email , adress ,  city , zipcode FROM habitant WHERE validity = 0 AND verify_email = 1';
@@ -205,42 +216,43 @@ function verify_validity($pdo){
     
     
     $count = count($results);
-    
-        echo '<div class="madiv">';
-    for($i = 0 ; $i < $count ; $i++){
-        
-        echo '<div style="padding : 25px 25px;">';
-        foreach($results[$i] as $key => $result){
-            switch ($key){
-                case 'surname':
-                    echo '<div><p> Nom : '.$result.'</p></div>';
-                    break;
-                case 'firstaname':
-                    echo '<div><p> Prenom : '.$result.'</p></div>';
-                    break;
-                case 'email':
-                    echo '<div><p> Email : '.$result.'</p></div>';
-                    break;
-                case 'adress':
-                    echo '<div><p> Adresse : '.$result.'</p></div>';
-                    break;
-                case 'city':
-                    echo '<div><p> Ville : '.$result.'</p></div>';
-                    break;
-                case 'zipcode':
-                    echo '<div><p> Code Postal : '.$result.'</p></div>';
-                    break;
+    if ($count > 0){
+            echo '<div class="madiv">';
+        for($i = 0 ; $i < $count ; $i++){
+            
+            echo '<div class="validity_habitant" >';
+            foreach($results[$i] as $key => $result){
+                switch ($key){
+                    case 'surname':
+                        echo '<div><p> Nom : '.$result.'</p></div>';
+                        break;
+                    case 'firstaname':
+                        echo '<div><p> Prenom : '.$result.'</p></div>';
+                        break;
+                    case 'email':
+                        echo '<div><p> Email : '.$result.'</p></div>';
+                        break;
+                    case 'adress':
+                        echo '<div><p> Adresse : '.$result.'</p></div>';
+                        break;
+                    case 'city':
+                        echo '<div><p> Ville : '.$result.'</p></div>';
+                        break;
+                    case 'zipcode':
+                        echo '<div><p> Code Postal : '.$result.'</p></div>';
+                        break;
+                }
             }
+            
+            echo '<form action="./employerDashboard.php" method="post" >
+            <input type="text" style="display : none;" name="email" value="'.$results[$i]['email'].'">
+            <input type="text" style="display : none;" name="attente" value="1">
+            <div>
+            <button class="btn btn-success" type="submit" name="validity" value="1">Valider l\'utilisateur</button>
+            </div>
+            </form>';
+            echo '</div>';
         }
-        
-        echo '<form action="./employerDashboard.php" method="post" >
-        <input type="text" style="display : none;" name="email" value="'.$results[$i]['email'].'">
-        <div>
-        <button class="btn btn-success" type="submit" name="validity" value="1">Valider l\'utilisateur</button>
-        </div>
-        </form>';
         echo '</div>';
     }
-    echo '</div>';
-    
 }

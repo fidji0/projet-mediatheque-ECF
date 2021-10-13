@@ -1,18 +1,27 @@
 <div>
-    <form class="form-inline my-2 my-lg-0" method="get">
-       
-        <div>
-        <input type="text" name="title" placeholder="titre">
-        </div>
-        <div class="form-group">
-            <label for="exampleFormControlSelect1">Genre </label>
-            <select class="form-control" id="exampleFormControlSelect1">
-                <option>1</option>
-                <option>2</option>
+    <nav class="navbar navbar-light bg-light">
+        <form class="form-inline my-2 my-lg-0 flexboxSearch" method="get">
+        
+            
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">Genre </label>
+            </div>
+            <div>
+                <select class="form-control" name="genre" id="exampleFormControlSelect1">
+                    <option value="" >Choisissez un genre</option>
+                    <?php
+                        $search->genre($pdo);
+                    ?>
 
-            </select>
-        </div>
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="search_book" value="1">Rechercher</button>
-    </form>
+                </select>
+            </div>
+            <div>
+                <input class="form-control mr-sm-2" name="title" type="search" placeholder="Titre" aria-label="Search">
+            </div>
+            <div>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit" name="search_book" value="1">Rechercher</button>
+            </div>
+        </form>
+
+    </nav>
 </div>

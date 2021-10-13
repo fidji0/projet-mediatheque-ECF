@@ -46,9 +46,7 @@ class Reservation{
                 
                 $test = $b->execute(array($reserveid , $id));
                 
-                echo '<div class="alert alert-success" role="alert">
-                Le livre à bien été réservé
-                </div>';
+                
             }catch (PDOException $e){
                 echo $e;
             }
@@ -57,7 +55,37 @@ class Reservation{
     }
     // permet de valider la récupération d'un livre 
     public function recuperation_book($pdo){
+       
+        // creation de la pagination
+        $request = "SELECT COUNT(R.id) AS ctn FROM book AS B 
+        INNER JOIN reservation as R INNER JOIN habitant AS H
+        WHERE B.dispo = 'reserved' AND B.id = R.book AND R.recuperation  IS NULL AND H.id = R.reader";
+
+        if(!empty($_GET['search_valid']) && $_GET['search_valid'] === '1' && (!empty($_GET['title']) || !empty($_GET['auteur'])
+            || !empty($_GET['surname']) || !empty($_GET['firstname']))){
+                $request .= " AND B.title LIKE ? AND B.auteur LIKE ? AND H.surname LIKE ? AND H.firstname LIKE ?";
+                $d = $pdo->prepare($request);
+                 
+              try{  $d->execute(array('%'.$_GET['title'].'%' ,'%'.$_GET['auteur'].'%','%'.$_GET['surname'].'%','%'.$_GET['firstname'].'%'));
+              }catch (PDOException $e){
+                  var_dump($e);
+              }
+        }else{
+        $d = $pdo->prepare($request);
+        $d->execute();
+        }
+        $counts = $d->fetchAll(PDO::FETCH_ASSOC);
         
+        $nbr_element_par_page = 2;
+        if (empty($_GET['page'])){
+            $_GET['page']=1;
+        }
+        
+        $debut = ($_GET['page']-1)*$nbr_element_par_page;
+        $nombre_de_page = ceil($counts[0]['ctn']/$nbr_element_par_page);
+        
+
+
         try{
             // récupère la liste des livres réservé depuis moins de 3 jours
             $request = "SELECT B.title , R.id ,  R.book FROM book AS B INNER JOIN reservation as R WHERE B.dispo = 'reserved' AND B.id = R.book AND R.recuperation IS NULL";
@@ -102,15 +130,17 @@ class Reservation{
 
             if(!empty($_GET['search_valid']) && $_GET['search_valid'] === '1' && (!empty($_GET['title']) || !empty($_GET['auteur'])
             || !empty($_GET['surname']) || !empty($_GET['firstname']))){
-                $request .= " AND (B.title LIKE ? AND B.auteur LIKE ? AND H.surname LIKE ? AND H.firstname LIKE ?)";
+                $request .= " AND (B.title LIKE ? AND B.auteur LIKE ? AND H.surname LIKE ? AND H.firstname LIKE ?) LIMIT $nbr_element_par_page OFFSET $debut";
                 $r = $pdo->prepare($request);
-               
+                
                 $r->execute(array('%'.$_GET['title'].'%' ,'%'.$_GET['auteur'].'%','%'.$_GET['surname'].'%','%'.$_GET['firstname'].'%'));
                
             }else{
+                $request .= " LIMIT $nbr_element_par_page OFFSET $debut";
                 $r = $pdo->prepare($request);
                 $r->execute();
             }
+            
             
             $result = $r->fetchAll(PDO::FETCH_ASSOC);
             $count = count($result);
@@ -136,9 +166,14 @@ class Reservation{
                 </td>
                 <td>
                     <input class="form-control" type="text" name="surname" placeholder="Nom">
+                    <input type="text" style="display : none" name="recuperation" value="1">
                 </td>
                 <td>
-                    <input class="form-control" type="text" name="firstname" placeholder="Prenom">
+                    <input class="form-control" type="text" name="firstname" placeholder="Prenom">';
+                    if(!empty($_GET['page'])){
+                        echo '<input class="p-2" type="text" style="display : none" name="page" value="'.$_GET['page'].'">';
+                    }
+                    echo '
                 </td>
                 <td>
                     <button class="btn btn-primary" type="submit" name="search_valid" value="1">Rechercher</button>
@@ -172,6 +207,7 @@ class Reservation{
                                 echo '<td style="display : none"><input class="" type="text" style="display : none" name="book" value="'.$return.'"></td>';
                                 break;
                             case 'id':
+                                echo '<input type="text" style="display : none" name="recuperation" value="1">';
                                 if(!empty($_GET['search_valid']) && $_GET['search_valid'] === '1' && (!empty($_GET['title']) || !empty($_GET['auteur'])
                                 || !empty($_GET['surname']) || !empty($_GET['firstname']))){
                                     echo '<input type="text" style="display : none" name="search_valid" value="'.$_GET['search_valid'].'">
@@ -190,12 +226,112 @@ class Reservation{
             } 
             echo '</tbody></table>';
 
+            
+        if($counts[0]['ctn'] > 0){
+            echo '<div class="mt-5 "  style="width : 100%;"> 
+        <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link"
+        ';
+        if(!empty($_GET['search_valid']) && $_GET['search_valid'] === '1' && (!empty($_GET['title']) || !empty($_GET['auteur'])
+        || !empty($_GET['surname']) || !empty($_GET['firstname']))){
+            $search = '&search_valid='.$_GET['search_valid'];
+            $title = '&title='.$_GET['title'];
+            $auteur = '&auteur='.$_GET['auteur'];
+            $surname = '&surname='.$_GET['surname'];
+            $firstname = '&firstname='.$_GET['firstname'];
+        }else{
+            $search = '&search_valid=1';
+            $title = '&title=';
+            $auteur = '&auteur=';
+            $surname = '&surname=';
+            $firstname = '&firstname=';
+            }
+
+        // on redirige si le visiteur modifie manuelement la page dans l'url
+        if ($_GET['page'] < 1 || $_GET['page'] > $nombre_de_page){
+            header('Location: ./employerDashboard.php?page=1&recuperation=1'.$search.$title.$auteur.$surname.$firstname.'');
+        }
+        // on renvoit a la page 1 si appuis sur precedent a la page 1
+        if ($_GET['page'] == 1){
+            echo 'href="?page=1&recuperation=1'.$search.$title.$auteur.$surname.$firstname.'">Precedente</a></li>';
+        }else{
+            echo ' href="?page='.($_GET['page']-1).'&recuperation=1'.$search.$title.$auteur.$surname.$firstname.'">Precedente</a></li>';
+        }
+        echo '<li><a class="page-link" href="?page=1&recuperation=1'.$search.$title.$auteur.$surname.$firstname.'"><<</a></li>';
+
+        // on boucle l'affichage des liens avec maximum 5 page à la fois
+        if (!empty($_GET['page']) && $_GET['page'] > 3 ){
+            $i= ($_GET['page']-2);
+        }else{
+            $i= 1 ;
+        }
+        if (!empty($_GET['page']) && ($_GET['page']+3) < $nombre_de_page ){
+            $fin = $_GET['page'] + 3;
+        }else{
+            $fin = $nombre_de_page;
+        }
+        for($i ; $i <= $fin ; $i++ ){
+            echo '<li class="';
+            if ($i == $_GET['page']){
+                echo ' active ';
+                
+            }
+            echo 'page-item"><a class="page-link" href="?page='.$i.'&recuperation=1'.$search.$title.$auteur.$surname.$firstname.'">'.$i.'</a></li>';
+            
+        }
+        echo '<li><a class="page-link" href="?page='.$nombre_de_page.'&recuperation=1'.$search.$title.$auteur.$surname.$firstname.'">>></a></li>';
+        echo '<li class="page-item"><a class="page-link" ';
+        
+        if ($_GET['page'] === $nombre_de_page){
+            echo 'href="?page='.$nombre_de_page.'&recuperation=1'.$search.$title.$auteur.$surname.$firstname.'">Suivante</a></li>';
+        }else{
+            echo ' href="?page='.($_GET['page']+1).'&recuperation=1'.$search.$title.$auteur.$surname.$firstname.'">Suivante</a></li>';
+        }
+        echo '</ul>
+            </nav>
+            </div>';
+    }
         }catch(PDOException $e){
             var_dump($e);
         }
     }
     // enregistre un retour et affiche les livres a retournés
     public function search_return_book($pdo){
+
+        $request = "SELECT COUNT(R.id) AS ctn
+        FROM habitant AS H INNER JOIN book AS B INNER JOIN reservation AS R 
+        WHERE R.reader = H.id AND R.book = B.id AND R.statut = 'emprunter' AND B.dispo = 'emprunter'";
+
+        if(!empty($_GET['search_return']) && $_GET['search_return'] === '1' && (!empty($_GET['title']) || !empty($_GET['auteur'])
+        || !empty($_GET['surname']) || !empty($_GET['firstname']) || !empty($_GET['email']))){
+            $request .= " AND (B.title LIKE ? AND B.auteur LIKE ? AND H.surname LIKE ? AND H.firstname LIKE ? AND H.email LIKE ?) ORDER BY R.recuperation";
+            $r = $pdo->prepare($request);
+        
+            $r->execute(array('%'.$_GET['title'].'%' ,'%'.$_GET['auteur'].'%','%'.$_GET['surname'].'%','%'.$_GET['firstname'].'%','%'.$_GET['email'].'%'));
+            $count = $r->fetchAll(PDO::FETCH_ASSOC);
+            var_dump($count);
+        }else{
+            $request .= "ORDER BY R.recuperation";
+            $r = $pdo->prepare($request);
+            $r->execute();
+            $counts = $r->fetchAll(PDO::FETCH_ASSOC);
+            
+
+        }
+        var_dump($counts);
+          
+
+        $nbr_element_par_page = 2;
+        if (empty($_GET['page'])){
+            $_GET['page']=1;
+        }
+        
+        $debut = ($_GET['page']-1)*$nbr_element_par_page;
+        $nombre_de_page = ceil($counts[0]['ctn']/$nbr_element_par_page);
+        
+
+
         try{
         $request = "SELECT H.surname , H.firstname , H.email ,  B.title , B.auteur , R.id , DATEDIFF ( DATE(NOW()) , recuperation) AS d
             FROM habitant AS H INNER JOIN book AS B INNER JOIN reservation AS R 
@@ -203,13 +339,13 @@ class Reservation{
         
         if(!empty($_GET['search_return']) && $_GET['search_return'] === '1' && (!empty($_GET['title']) || !empty($_GET['auteur'])
         || !empty($_GET['surname']) || !empty($_GET['firstname']) || !empty($_GET['email']))){
-            $request .= " AND (B.title LIKE ? AND B.auteur LIKE ? AND H.surname LIKE ? AND H.firstname LIKE ? AND H.email LIKE ?) ORDER BY R.recuperation";
+            $request .= " AND (B.title LIKE ? AND B.auteur LIKE ? AND H.surname LIKE ? AND H.firstname LIKE ? AND H.email LIKE ?) ORDER BY R.recuperation LIMIT $nbr_element_par_page OFFSET $debut";
             $r = $pdo->prepare($request);
            
             $r->execute(array('%'.$_GET['title'].'%' ,'%'.$_GET['auteur'].'%','%'.$_GET['surname'].'%','%'.$_GET['firstname'].'%','%'.$_GET['email'].'%'));
            
         }else{
-            $request .= "ORDER BY R.recuperation";
+            $request .= "ORDER BY R.recuperation LIMIT $nbr_element_par_page OFFSET $debut";
             $r = $pdo->prepare($request);
             $r->execute();
         }
@@ -291,6 +427,7 @@ class Reservation{
                                 echo '<td><div class="align-center"><h5>'.ucfirst($return).' </h5></div></td>';
                             break;
                             case 'id':
+                                echo '<input type="text" style="display : none" name="retour" value="'.$_GET['retour'].'">';
                                 if(!empty($_GET['search_return']) && $_GET['search_return'] === '1' && ((!empty($_GET['title']) || !empty($_GET['auteur'])
                                 || !empty($_GET['surname']) || !empty($_GET['firstname']) || !empty($_GET['email'])))){
                                     echo '<input type="text" style="display : none" name="search_return" value="'.$_GET['search_return'].'">
@@ -298,8 +435,8 @@ class Reservation{
                                     <input type="text" style="display : none" name="auteur" value="'.$_GET['auteur'].'">
                                     <input type="text" style="display : none" name="surname" value="'.$_GET['surname'].'">
                                     <input type="text" style="display : none" name="firstname" value="'.$_GET['firstname'].'">
-                                    <input type="text" style="display : none" name="email" value="'.$_GET['email'].'">
-                                    <input type="text" style="display : none" name="retour" value="'.$_GET['retour'].'">';
+                                    <input type="text" style="display : none" name="email" value="'.$_GET['email'].'">'
+                                    ;
                                 }
                                 echo '<td><div class="pb-2 align-center"> <button class="btn btn-primary p-2" type="submit" name="returnid" value="'.$return.'" >Je valide le retour du livre</button>
                                 </div></td>';
@@ -310,6 +447,74 @@ class Reservation{
                 echo '</form></div></tr>';
             }
             echo '</tbody></table>';
+                 
+        if($counts[0]['ctn'] != 0){
+            echo '<div class="mt-5 "  style="width : 100%;"> 
+        <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link"
+        ';
+        if(!empty($_GET['search_return']) && $_GET['search_return'] === '1' && (!empty($_GET['title']) || !empty($_GET['auteur'])
+        || !empty($_GET['surname']) || !empty($_GET['firstname']) || !empty($_GET['email']))){
+            $search = '&search_return='.$_GET['search_valid'];
+            $title = '&title='.$_GET['title'];
+            $auteur = '&auteur='.$_GET['auteur'];
+            $surname = '&surname='.$_GET['surname'];
+            $firstname = '&firstname='.$_GET['firstname'];
+            $email = '&email='.$_GET['email'];
+        }else{
+            $search = '&search_return=1';
+            $title = '&title=';
+            $auteur = '&auteur=';
+            $surname = '&surname=';
+            $firstname = '&firstname=';
+            $email = '&email=';
+            }
+
+        // on redirige si le visiteur modifie manuelement la page dans l'url
+        if ($_GET['page'] < 1 || $_GET['page'] > $nombre_de_page){
+            header('Location: ./employerDashboard.php?page=1&retour=1'.$search.$title.$auteur.$surname.$firstname.$email);
+        }
+        // on renvoit a la page 1 si appuis sur precedent a la page 1
+        if ($_GET['page'] == 1){
+            echo 'href="?page=1&retour=1'.$search.$title.$auteur.$surname.$firstname.$email.'">Precedente</a></li>';
+        }else{
+            echo ' href="?page='.($_GET['page']-1).'&retour=1'.$search.$title.$auteur.$surname.$firstname.$email.'">Precedente</a></li>';
+        }
+        echo '<li><a class="page-link" href="?page=1&retour=1'.$search.$title.$auteur.$surname.$firstname.$email.'"><<</a></li>';
+
+        // on boucle l'affichage des liens avec maximum 5 page à la fois
+        if (!empty($_GET['page']) && $_GET['page'] > 3 ){
+            $i= ($_GET['page']-2);
+        }else{
+            $i= 1 ;
+        }
+        if (!empty($_GET['page']) && ($_GET['page']+3) < $nombre_de_page ){
+            $fin = $_GET['page'] + 3;
+        }else{
+            $fin = $nombre_de_page;
+        }
+        for($i ; $i <= $fin ; $i++ ){
+            echo '<li class="';
+            if ($i == $_GET['page']){
+                echo ' active ';
+                
+            }
+            echo 'page-item"><a class="page-link" href="?page='.$i.$search.$title.$auteur.$surname.$firstname.$email.'&retour=1">'.$i.'</a></li>';
+            
+        }
+        echo '<li><a class="page-link" href="?page='.$nombre_de_page.$search.$title.$auteur.$surname.$firstname.$email.'&retour=1">>></a></li>';
+        echo '<li class="page-item"><a class="page-link" ';
+        
+        if ($_GET['page'] == $nombre_de_page){
+            echo 'href="?page='.$nombre_de_page.$search.$title.$auteur.$surname.$firstname.$email.'&retour=1">Suivante</a></li>';
+        }else{
+            echo ' href="?page='.($_GET['page']+1).$search.$title.$auteur.$surname.$firstname.$email.'&retour=1">Suivante</a></li>';
+        }
+        echo '</ul>
+            </nav>
+            </div>';
+    }
         }
         catch (PDOException $e){
             echo $e;
@@ -373,17 +578,45 @@ class Reservation{
     }
     
     public function en_retard($pdo){
-        $request = "SELECT H.surname , H.firstname , H.email ,  B.title , B.auteur , R.id , DATEDIFF ( DATE(NOW()) , recuperation) AS d
+        $request = "SELECT H.surname , H.firstname , H.email ,  B.title , B.auteur , R.id  AS d
         FROM habitant AS H INNER JOIN book AS B INNER JOIN reservation AS R 
-        WHERE R.reader = H.id AND R.book = B.id AND R.statut = 'emprunter' AND B.dispo = 'emprunter'";
+        WHERE DATEDIFF ( DATE(NOW()) , R.recuperation)> '21' AND R.reader = H.id AND R.book = B.id AND R.statut = 'emprunter' AND B.dispo = 'emprunter'";
 
 
-        $request .= "ORDER BY R.recuperation";
+       try{ $request .= "ORDER BY R.recuperation";
         $r = $pdo->prepare($request);
         $r->execute();
         
         $result = $r->fetchAll();
         $count = count($result);
-        echo $count;
+        echo $count;}
+        catch(PDOException $e)
+        {
+            echo 'erreur';
+            
+        }
+    }
+    // historique de chaque utilisateur qui d'affiche sur la page mon compte
+    public function historique_reservation($pdo){
+        try{
+            $request = "SELECT B.title, R.reservation , R.bookreturn FROM book AS B INNER JOIN reservation AS R INNER JOIN habitant AS H 
+            WHERE R.reader = ? AND H.id = R.reader AND B.id = R.book ";
+            $r = $pdo->prepare($request);
+            $r->execute([$_SESSION['id']]);
+            $result = $r->fetchAll(PDO::FETCH_ASSOC);
+
+            $this->echo($result);
+             
+
+
+
+
+
+        }catch(PDOException $e){
+            echo "Une erreur est survenue";
+        }catch (Exception $e){
+            echo "Une erreur est survenue";
+        }
+
     }
 }

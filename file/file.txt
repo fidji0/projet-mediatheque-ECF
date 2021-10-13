@@ -1,0 +1,10 @@
+outlander,test,auteur,date,desciprion
+outlander,test,auteur,date,desciprion
+outlander,test,auteur,date,desciprion
+
+    $lines = file('./file/file.txt');
+
+    // Affiche toutes les lignes du tableau comme code HTML, avec les numéros de ligne
+    foreach ($lines as $line_num => $line) {
+        echo "Line #<b>{$line_num}</b> : " . var_dump(explode(",",$line)) . "<br />\n";
+    }

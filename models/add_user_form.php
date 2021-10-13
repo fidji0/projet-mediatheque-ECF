@@ -1,9 +1,9 @@
 <div class="form-perso">
     <?php
     require_once "./controllers/functionAuthenticate.php";
-     createUser($pdo);
-     $return = false ;
-
+    $return = createUser($pdo);
+      
+    
     ?>
 
     <form action="./inscription.php" method="post" >

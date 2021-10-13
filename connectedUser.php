@@ -14,15 +14,17 @@ valid_email($pdo);
 if(!isset($_SESSION['email'])){
     header('Location: ./connect.php');
 }else{
-$title = "Vous êtes bien connecté";
-$descriptionPage = "Bienvenue sur le site de la médiathèque de ..., nous sommes heureux de votre présence.";
+$title = "Cherchez et réservez vos livres";
+$descriptionPage = "Vous pouvez réserver vos livre ici";
 
 
 require_once "./models/head.php";
 require_once "./models/header.php";
 ?>
 <main class="mainConnected">
-
+<?php
+    require_once "./models/search_bar.php";
+?>
 
 </div>
         <div class="container-book">
@@ -33,32 +35,9 @@ require_once "./models/header.php";
         ?>
         </div>
         
-            
-    
-
-    
-
-
-
-
-
 
 
 </main>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <?php

@@ -4,13 +4,47 @@ class Search{
         public $search = '';
         public $genre = '';
 
-   
-    public function select_genre($pdo){
-        $request = "SELECT COUNT(id) AS ctn FROM book ";
+    public function genre($pdo){
+        $request = "SELECT genre FROM book GROUP BY genre";
+
         $d = $pdo->prepare($request);
         $d->execute();
-        $count = $d->fetchAll(PDO::FETCH_ASSOC);
+        $result = $d->fetchAll(PDO::FETCH_ASSOC);
 
+        $count= count($result);
+        for($i = 0 ; $i < $count ; $i++){
+            
+            foreach($result[$i] as $key => $res){ 
+                echo '<option>'.$res.'</option>';
+            }
+        }
+    }
+    public function select_genre($pdo){
+        try{  
+        
+        $request = "SELECT COUNT(id) AS ctn FROM book ";
+        if(!empty($_GET['search_book']) && $_GET['search_book'] == '1' && ((!empty($_GET['title']) || !empty($_GET['genre'])))){
+            $title = $_GET['title'];
+            $genre = $_GET['genre'];
+            $request .= "WHERE genre LIKE ? AND title LIKE ?";
+            $d = $pdo->prepare($request);
+            $d->execute(['%'.$_GET['genre'].'%','%'.$_GET['title'].'%']);
+            
+
+        }else{
+            $d = $pdo->prepare($request);
+            $d->execute();
+            
+        }
+       
+        
+        $counts = $d->fetchAll(PDO::FETCH_ASSOC);
+        
+
+         }catch(PDOException $e){
+             echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('webmaster@test.fr', ' erreur requette sql', $e);
+         }
         // creation de la pagination
         $nbr_element_par_page = 5;
         if (empty($_GET['page'])){
@@ -18,27 +52,28 @@ class Search{
         }
         $page = $_GET['page'];
         $debut = ($_GET['page']-1)*$nbr_element_par_page;
-        $nombre_de_page = ceil($count[0]['ctn']/$nbr_element_par_page);
+        $nombre_de_page = ceil($counts[0]['ctn']/$nbr_element_par_page);
         
         
        
 
-        $request = "SELECT id ,link_img, title ,  descriptions, auteur, genre, dispo, publication_date  FROM book LIMIT $nbr_element_par_page OFFSET $debut";
+        $request = "SELECT id ,link_img, title ,  descriptions, auteur, genre, dispo, publication_date FROM book ";
         
-        if(!empty($_GET['search_book']) && $_GET['search_book'] === '1' && (!empty($_GET['title']) || !empty($_GET['genre']))){
-            $request .= "WHERE genre LIKE ? AND  tile = ?";
+        if(!empty($_GET['search_book']) && $_GET['search_book'] == '1' && (!empty($_GET['title']) || !empty($_GET['genre']))){
+            $request .= "WHERE genre LIKE ? AND  title LIKE ? LIMIT $nbr_element_par_page OFFSET $debut";
             $r = $pdo->prepare($request);
-            $r->execute(array('%'.$_GET['title'].'%','%'.$_GET['genre'].'%'));
+            $r->execute(array('%'.$_GET['genre'].'%','%'.$_GET['title'].'%'));
         }else{
+            $request .= "LIMIT $nbr_element_par_page OFFSET $debut";
             $r = $pdo->prepare($request);
             $r->execute();
         }
 
             $results = $r->fetchAll(PDO::FETCH_ASSOC);
-
+            
             $count = count($results);
         
-            
+        if($count > 0){    
         for($i = 0 ; $i < $count ; $i++){
        
             echo '
@@ -106,24 +141,40 @@ class Search{
             }
             echo '</form></div>';
         }   
-
+    }
+        if($counts[0]['ctn'] === '0'){
+            echo '<div class="alert alert-danger" role="alert">
+                    Il n\'y a pas de résultat à votre recherche.
+                </div>';
+        }else{
+            
+        
         echo '<div class="mt-5 "  style="width : 100%;"> 
         <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
             <li class="page-item"><a class="page-link"
         ';
-
+        //
+        if(!empty($_GET['title']) || !empty($_GET['genre'])){
+            $genre = '&genre='.$_GET['genre'];
+            $title = '&title='.$_GET['title'];
+            $search = '&search_book='.$_GET['search_book'];
+        }else{
+            $genre = '&genre=';
+            $title = '&title=';
+            $search = '&search_book=';
+        }
         // on redirige si le visiteur modifie manuelement la page dans l'url
         if ($_GET['page'] < 1 || $_GET['page'] > $nombre_de_page){
-            header('Location: ./connectedUser.php?page=1');
+            header('Location: ./connectedUser.php?page=1'.$genre.$title.$search.'');
         }
         // on renvoit a la page 1 si appuis sur precedent a la page 1
         if ($_GET['page'] === 1){
-            echo 'href="?page=1">Precedente</a></li>';
+            echo 'href="?page=1'.$genre.$title.'">Precedente</a></li>';
         }else{
-            echo ' href="?page='.($_GET['page']-1).'">Precedente</a></li>';
+            echo ' href="?page='.($_GET['page']-1).$genre.$title.$search.'">Precedente</a></li>';
         }
-        echo '<li><a class="page-link" href="?page=1"><<</a></li>';
+        echo '<li><a class="page-link" href="?page=1'.$genre.$title.$search.'"><<</a></li>';
 
         // on boucle l'affichage des liens avec maximum 5 page à la fois
         if (!empty($_GET['page']) && $_GET['page'] > 3 ){
@@ -142,30 +193,31 @@ class Search{
                 echo ' active ';
                 
             }
-            echo 'page-item"><a class="page-link" href="?page='.$i.'">'.$i.'</a></li>';
+            echo 'page-item"><a class="page-link" href="?page='.$i.$genre.$title.$search.'">'.$i.'</a></li>';
             
         }
-        echo '<li><a class="page-link" href="?page='.$nombre_de_page.'">>></a></li>';
+        echo '<li><a class="page-link" href="?page='.$nombre_de_page.$genre.$title.$search.'">>></a></li>';
         echo '<li class="page-item"><a class="page-link" ';
         
         if ($_GET['page'] === $nombre_de_page){
-            echo 'href="?page='.$nombre_de_page.'">Suivante</a></li>';
+            echo 'href="?page='.$nombre_de_page.$genre.$title.$search.'">Suivante</a></li>';
         }else{
-            echo ' href="?page='.($_GET['page']+1).'">Suivante</a></li>';
+            echo ' href="?page='.($_GET['page']+1).$genre.$title.$search.'">Suivante</a></li>';
         }
         echo '</ul>
             </nav>
             </div>';
-        
+        }
         
     }
     function detail_book($pdo){
         if(!empty($_GET['id'])){
-            $id = $_GET['id'];
-            $request = "SELECT id, link_img, title , descriptions, auteur, genre, dispo, publication_date  FROM book WHERE id = $id";
             
+            $request = "SELECT id, link_img, title , descriptions, auteur, genre, dispo, publication_date  FROM book WHERE id = ?";
+                $d= $pdo->prepare($request);
+                $d->execute([$_GET['id']]);
 
-                $results = $pdo->query($request)->fetchAll(PDO::FETCH_ASSOC);
+                $results = $d->fetchAll(PDO::FETCH_ASSOC);
                     
                 echo '
                 <div class="width100 mb-5">
@@ -209,7 +261,7 @@ class Search{
                             break;
                         case 'dispo':
                             if($result === 'disponible'){
-                                echo '<div class="pb-2 align-center"> <button class="btn btn_perso p-2" type="submit" name="dispo" value="'.$id.'" >Je réserve ce livre</button>
+                                echo '<div class="pb-2 align-center"> <button class="btn btn_perso p-2" type="submit" name="dispo" value="'.$_GET['id'].'" >Je réserve ce livre</button>
                                 </div>';
                             break;}
                             elseif($result === 'reserved'){

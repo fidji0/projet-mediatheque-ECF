@@ -2,6 +2,7 @@
     <div class="flexboxheader">
         <a href="./"><h1>Mediatheque de La Chapelle-Curreaux</h1></a>
     </div>
+    
     <div>
     <nav class="navbar navbar-expand-lg navbar-light bg-navbar ">
     
@@ -10,7 +11,7 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto align-center">
+            <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
                 <a class="nav-link" href="./">Accueil</a>
             </li>
@@ -27,22 +28,35 @@
                         <a class="nav-link" href="./connectedUser.php">Chercher un livre</a>
                     </li>';
             }
-            if(empty($_SESSION['email'])){
-                echo '<li class="nav-item">
-                        <a class="nav-link" href="./connect.php">Se connecter</a>
-                    </li>';
-            }else{
-                echo '<li class="nav-item">
-                <a class="nav-link" href="./index.php?disconnected=1">Se deconnecter</a>
-            </li>';
-            
-            }
+           
         ?>
+        
             </ul>
             
         </div>
+        <div>
+        <?php
+        echo '<ul class="navbar-nav mr-auto">';
+         if(empty($_SESSION['email'])){
+            echo '
+                    <a class="nav-link" href="./connect.php">Se connecter</a>
+               ';
+        }else{
+            echo '<a class="nav-link" href="./moncompte.php">Mon compte</a>
+            <a class="nav-link" href="./index.php?disconnected=1">Se deconnecter</a>
+        ';
+        
+        }
+        
+        ?>
+          </ul>
+            </div>
     </nav>
     </div>
+    
+            <div>
+                
+            </div>
     <?php
     if($title !== 'Tableau de bord employé'){
         ?>

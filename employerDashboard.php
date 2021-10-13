@@ -31,8 +31,10 @@ $reserved->annulation_reservation($pdo);
         $reserved->search_return_book($pdo);
     }elseif(!empty($_GET['recuperation']) && $_GET['recuperation'] == '1'){
         $reserved->recuperation_book($pdo);
+    }elseif(!empty($_GET['attente']) && $_GET['attente'] == 1){
+        verify_validity($pdo);
     }
-        
+
 ?>
 <div class="presentation">
         
@@ -53,23 +55,20 @@ $reserved->annulation_reservation($pdo);
         <a href="?retour=1"><button class="button">Valider un retour</button></a>
     </div>
     <div>
-        <a href="?retard=1"><button class="btn-retard"><?php $reserved->en_retard($pdo) ?></button></a>
+        <a href="?retour=1"><button class="btn-retard"><?php $reserved->en_retard($pdo) ?></button></a>
     </div>
 </div>
 <div class="flexboxDashboard">
+   
     <div>
         <a href="?addBook=1"><button class="button">Ajouter un livre</button></a>
     </div>
+    <div>
+        <a href="?attente=1"><button class="button"><?php en_attente($pdo) ?> en attente de validation</button></a>
+    </div>
 </div>
 
-<?php 
 
-    
-   
-
-    
-    verify_validity($pdo);
-?>   
 <?php
  /*require_once "./models/add_books_forms.php";*/
 ?>
