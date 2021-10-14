@@ -16,7 +16,7 @@ class Reservation{
             $verif = "SELECT dispo FROM book WHERE id = ?";
             $resultVerif = $pdo->prepare($verif);
             $resultVerif->execute(array($id));
-            $p = $resultVerif->fetchAll();
+            $p = $resultVerif->fetchAll(PDO::FETCH_ASSOC);
            
             // je vérifie si le livre est disponible
             if($p[0]['dispo'] === 'disponible'){
@@ -37,7 +37,7 @@ class Reservation{
                 // récupération de l'id de la réservation
                 $d = $pdo->prepare($request3);
                 $d->execute(array($_SESSION['id'], $_GET['dispo']));
-                $rest = $d->fetchAll();
+                $rest = $d->fetchAll(PDO::FETCH_ASSOC);
                 $reserveid = $rest[0]['id'];
                 
 
@@ -48,7 +48,11 @@ class Reservation{
                 
                 
             }catch (PDOException $e){
-                echo $e;
+                echo 'Une erreur est survenue le webmaster à été avisé';
+                 mail('contact@av.developpeur.fr', ' erreur sql', $e);
+            }catch (Exception $e){
+                echo 'Une erreur est survenue le webmaster à été avisé';
+                 mail('contact@av.developpeur.fr', ' erreur php', $e);
             }
             }
         }
@@ -68,8 +72,12 @@ class Reservation{
                  
               try{  $d->execute(array('%'.$_GET['title'].'%' ,'%'.$_GET['auteur'].'%','%'.$_GET['surname'].'%','%'.$_GET['firstname'].'%'));
               }catch (PDOException $e){
-                  var_dump($e);
-              }
+                echo 'Une erreur est survenue le webmaster à été avisé';
+                mail('contact@av.developpeur.fr', ' erreur sql', $e);
+              }catch (Exception $e){
+                echo 'Une erreur est survenue le webmaster à été avisé';
+                 mail('contact@av.developpeur.fr', ' erreur php', $e);
+            }
         }else{
         $d = $pdo->prepare($request);
         $d->execute();
@@ -106,7 +114,7 @@ class Reservation{
                     $request3 = "SELECT dispo FROM book WHERE id = ?";
                     $r = $pdo->prepare($request3);
                     $r->execute(array($book));
-                    $result3 = $r->fetchAll();
+                    $result3 = $r->fetchAll(PDO::FETCH_ASSOC);
 
                     // vérifie le statut de disponibilité du livre
                     if($result3[$i]['dispo'] === 'reserved' ){
@@ -118,7 +126,11 @@ class Reservation{
                         $c=  $pdo->prepare($request4);
                         $c->execute(array($book , $reservid));
                         }catch(PDOException $e){
-                            echo $e;
+                            echo 'Une erreur est survenue le webmaster à été avisé';
+                            mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
+                        }catch (Exception $e){
+                            echo 'Une erreur est survenue le webmaster à été avisé';
+                             mail('contact@av.developpeur.fr', ' erreur php', $e);
                         }
                     }
                 }
@@ -283,7 +295,7 @@ class Reservation{
         echo '<li><a class="page-link" href="?page='.$nombre_de_page.'&recuperation=1'.$search.$title.$auteur.$surname.$firstname.'">>></a></li>';
         echo '<li class="page-item"><a class="page-link" ';
         
-        if ($_GET['page'] === $nombre_de_page){
+        if ($_GET['page'] == $nombre_de_page){
             echo 'href="?page='.$nombre_de_page.'&recuperation=1'.$search.$title.$auteur.$surname.$firstname.'">Suivante</a></li>';
         }else{
             echo ' href="?page='.($_GET['page']+1).'&recuperation=1'.$search.$title.$auteur.$surname.$firstname.'">Suivante</a></li>';
@@ -293,7 +305,11 @@ class Reservation{
             </div>';
     }
         }catch(PDOException $e){
-            var_dump($e);
+            echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
+        }catch (Exception $e){
+            echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur php', $e);
         }
     }
     // enregistre un retour et affiche les livres a retournés
@@ -319,7 +335,7 @@ class Reservation{
             
 
         }
-        var_dump($counts);
+        
           
 
         $nbr_element_par_page = 2;
@@ -349,7 +365,7 @@ class Reservation{
             $r = $pdo->prepare($request);
             $r->execute();
         }
-            $result = $r->fetchAll();
+            $result = $r->fetchAll(PDO::FETCH_ASSOC);
             $count = count($result);
             
 
@@ -418,9 +434,6 @@ class Reservation{
                                 echo '<td><div class="align-center"><h5>'.ucfirst($return).' </h5></div></td>';
                             break;
                             case 'firstname' :
-                                echo '<td><div class="align-center"><h5>'.ucfirst($return).' </h5></div></td>';
-                            break;
-                            case 'surname' :
                                 echo '<td><div class="align-center"><h5>'.ucfirst($return).' </h5></div></td>';
                             break;
                             case 'email' :
@@ -517,7 +530,11 @@ class Reservation{
     }
         }
         catch (PDOException $e){
-            echo $e;
+            echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
+        }catch (Exception $e){
+            echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur php', $e);
         }
         
     }
@@ -587,36 +604,124 @@ class Reservation{
         $r = $pdo->prepare($request);
         $r->execute();
         
-        $result = $r->fetchAll();
+        $result = $r->fetchAll(PDO::FETCH_ASSOC);
         $count = count($result);
         echo $count;}
         catch(PDOException $e)
         {
-            echo 'erreur';
+            echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
             
+        }catch (Exception $e){
+            echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur php', $e);
         }
     }
     // historique de chaque utilisateur qui d'affiche sur la page mon compte
     public function historique_reservation($pdo){
-        try{
-            $request = "SELECT B.title, R.reservation , R.bookreturn FROM book AS B INNER JOIN reservation AS R INNER JOIN habitant AS H 
-            WHERE R.reader = ? AND H.id = R.reader AND B.id = R.book ";
+        try{ 
+            $request = 'SELECT B.title, B.auteur, DATE_FORMAT(R.reservation, "%d/%m/%Y") AS reservation , DATE_FORMAT(R.bookreturn, "%d/%m/%Y") AS bookreturn , DATE_FORMAT(DATE_ADD(R.recuperation, INTERVAL 21 DAY) , "%d/%m/%Y") AS recuperation , 
+            DATEDIFF(DATE_ADD(R.recuperation, INTERVAL 21 DAY) , DATE(NOW())) AS d FROM book AS B INNER JOIN reservation AS R INNER JOIN habitant AS H 
+            WHERE R.reader = ? AND H.id = R.reader AND B.id = R.book AND R.recuperation IS NOT NULL ORDER BY d DESC ';
             $r = $pdo->prepare($request);
             $r->execute([$_SESSION['id']]);
             $result = $r->fetchAll(PDO::FETCH_ASSOC);
+            $count = count($result);
 
-            $this->echo($result);
+            
+          
              
+            echo '<table class="table_historique">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Auteur</th>
+                    <th>Date de retour</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+            ';
+            for($i = 0 ; $i < $count ; $i++){
+                
+                $return_date = $result[$i]['recuperation'];
+                $d = $result[$i]['d'];
+                
+                if($d < 0 && empty($return_date)){
+                    echo '<tr class=" tr-alert">';
+                }else{
+                    echo '
+                        <tr>';
+                }
+                foreach($result[$i] as $key => $return){
+                    if(!empty($result)){
+                        switch ($key) {
+                            case 'title' :
+                                echo '<td><div class="align-center"><h5>'.ucfirst($return).' </h5></div></td>';
+                                break;
+                            case 'auteur' :
+                                echo '<td><div class="align-center"><h5>'.ucfirst($return).' </h5></div></td>';
+                                break;
+                           
+                            case 'bookreturn' :
+                                if($return === null && $d >= 0){
+                                    echo '<td><div class="align-center"><h5>A retourner avant le <br>'.$return_date.' </h5></div></td>';
+                                    break;
+                                }elseif($d < 0 && empty($return_date)){
+                                    echo '<td><div class="align-center"><h5>EN RETARD <br>'.$return_date.' </h5></div></td>';
+                                    break;
+                                }else{
+                                echo '<td><div class="align-center"><h5>Rendu</h5></div></td>';
+                            break;}
+                            
+                        }
+                    }
+                }
+                echo '</tr>';
+            }
+            echo '</tbody></table>';
 
 
-
-
+        
 
         }catch(PDOException $e){
-            echo "Une erreur est survenue";
+            echo 'Une erreur est survenue le webmaster à été avisé';
+            mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
         }catch (Exception $e){
-            echo "Une erreur est survenue";
+            echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
         }
 
     }
+    public function habitant_retard_notif($pdo){
+        try{
+        $request = 'SELECT DATEDIFF(DATE_ADD(R.recuperation, INTERVAL 21 DAY) , DATE(NOW())) AS d FROM book AS B INNER JOIN reservation AS R INNER JOIN habitant AS H 
+            WHERE R.reader = ? AND H.id = R.reader AND B.id = R.book AND R.recuperation IS NOT NULL AND R.bookreturn IS NULL ORDER BY d ';
+            $r = $pdo->prepare($request);
+            $r->execute([$_SESSION['id']]);
+            $result = $r->fetchAll(PDO::FETCH_ASSOC);
+            $count = count($result);
+            
+            $nbr_livre_retard = 0;
+            for($i = 0 ; $i < $count ; $i++){
+            $d = $result[$i]['d'];
+                if ($d < 0){
+                    $nbr_livre_retard ++;
+                }
+            }
+            if($nbr_livre_retard > 0){
+            echo 'Vous avez un ou plusieurs livres en retard';
+            }
+
+        }catch(PDOException $e)
+        {
+            echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
+            
+        }catch (Exception $e){
+            echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur php', $e);
+        }
+    }
+
 }

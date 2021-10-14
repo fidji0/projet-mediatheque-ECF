@@ -43,7 +43,7 @@ class Search{
 
          }catch(PDOException $e){
              echo 'Une erreur est survenue le webmaster à été avisé';
-             mail('webmaster@test.fr', ' erreur requette sql', $e);
+             mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
          }
         // creation de la pagination
         $nbr_element_par_page = 5;
@@ -199,7 +199,7 @@ class Search{
         echo '<li><a class="page-link" href="?page='.$nombre_de_page.$genre.$title.$search.'">>></a></li>';
         echo '<li class="page-item"><a class="page-link" ';
         
-        if ($_GET['page'] === $nombre_de_page){
+        if ($_GET['page'] == $nombre_de_page){
             echo 'href="?page='.$nombre_de_page.$genre.$title.$search.'">Suivante</a></li>';
         }else{
             echo ' href="?page='.($_GET['page']+1).$genre.$title.$search.'">Suivante</a></li>';

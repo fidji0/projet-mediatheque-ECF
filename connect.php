@@ -4,7 +4,7 @@ session_start();
 require_once "./controllers/pdoConnexion.php";
 
 
-
+$page = 6;
 
 require_once "./models/head.php";
 require_once "./models/header.php";

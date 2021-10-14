@@ -148,10 +148,29 @@ a:hover {
     background-color: #CEE5D0;
     align-items: center;
 }
-.table_valid_book , td , th{
+.table_valid_book , .table_valid_book td , .table_valid_book th{
     border : 1px solid;
     padding: 20px;
     margin: 20px;
+    
+}
+.table_historique{
+    width: 95%;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 30px;
+    
+}
+.table_historique td ,.table_historique th{
+    border : 1px solid;
+    padding: 10px;
+    margin: 10px;    
+}
+.table_historique td ,.table_historique th{
+    display: table-cell;
+}
+.table_historique h5 , .table_historique th{
+    font-size: 100%;
 }
 .table_valid_book{
     width: 95%;
@@ -196,6 +215,14 @@ a:hover {
         height: auto;
         width: 90%;
         margin: 0px 5%;
+    }
+    .presentation {
+
+        margin: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-around;
     }
 }
 .text-little {

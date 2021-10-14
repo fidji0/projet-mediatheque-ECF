@@ -15,9 +15,10 @@ if(!isset($_SESSION['email'])){
     if($_SESSION['role'] !== 'employer'){
         header('Location: ./index.php');
     }
+    
 $title = "Tableau de bord employé";
 $descriptionPage = "Bienvenue sur le site de la médiathèque de ..., nous sommes heureux de votre présence.";
-
+$page = 2;
 
 
 require_once "./models/head.php";
@@ -27,12 +28,17 @@ $reserved->annulation_reservation($pdo);
 ?>
 <main>
 <?php
+
+
+
     if(!empty($_GET['retour']) && $_GET['retour'] == '1'){
         $reserved->search_return_book($pdo);
     }elseif(!empty($_GET['recuperation']) && $_GET['recuperation'] == '1'){
         $reserved->recuperation_book($pdo);
     }elseif(!empty($_GET['attente']) && $_GET['attente'] == 1){
         verify_validity($pdo);
+    }elseif(!empty($_GET['addBook']) && $_GET['addBook'] == 1){
+        require_once "./models/add_books_forms.php";
     }
 
 ?>
@@ -69,9 +75,7 @@ $reserved->annulation_reservation($pdo);
 </div>
 
 
-<?php
- /*require_once "./models/add_books_forms.php";*/
-?>
+
     </div>
 
 

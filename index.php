@@ -5,7 +5,7 @@ if($_GET['disconnected'] == 1){
 }
 
 require_once "./controllers/pdoConnexion.php";
-
+$page = 1;
 $title = "Bienvenue sur le site de la médiathèque de ...";
 $descriptionPage = "Bienvenue sur le site de la médiathèque de ..., nous sommes heureux de votre présence.";
 

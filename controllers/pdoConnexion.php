@@ -16,10 +16,14 @@ $pdo = new PDO($dsn, $username, $password);
         echo "base de donée créée";
         }
         catch (PDOException $e){
-            echo $e;
+            echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
+        }catch (Exception $e){
+            echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur php', $e);
         }
      
-       
+    try{
         $pdo = new PDO($dsn, $username, $password);
         $usercreate='CREATE TABLE habitant
         (
@@ -49,7 +53,7 @@ $pdo = new PDO($dsn, $username, $password);
             auteur VARCHAR(255) NOT NULL,
             dispo VARCHAR(255) NOT NULL DEFAULT "disponible",
             genre VARCHAR(255) NOT NULL,
-            reserveid INTEGER NULL,
+            reserveid INTEGER NULL
 
                     )';
         $pdo->prepare($bookcreate)->execute();
@@ -68,4 +72,14 @@ $pdo = new PDO($dsn, $username, $password);
 
         $pdo->prepare($reservation)->execute();
         echo '<br>table reservation crée';
+    }catch(PDOException $e){
+        echo 'Une erreur est survenue le webmaster à été avisé';
+             mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
+    }catch (Exception $e){
+        echo 'Une erreur est survenue le webmaster à été avisé';
+         mail('contact@av.developpeur.fr', ' erreur php', $e);
+    }catch (Exception $e){
+        echo 'Une erreur est survenue le webmaster à été avisé';
+         mail('contact@av.developpeur.fr', ' erreur php', $e);
+    }
  }

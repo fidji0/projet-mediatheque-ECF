@@ -14,6 +14,7 @@ valid_email($pdo);
 if(!isset($_SESSION['email'])){
     header('Location: ./connect.php');
 }else{
+$page = 3;
 $title = "Cherchez et réservez vos livres";
 $descriptionPage = "Vous pouvez réserver vos livre ici";
 

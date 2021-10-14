@@ -12,7 +12,8 @@
         
         <div class="form-group pt-2">
             <label for="contactForm1">Votre mot de passe :</label> 
-            <input type="password" class="form-control" id="contactForm1" name="password" required >
+            <input type="password" class="form-control" id="afPassword" name="password" required >
+            <input type="checkbox" onclick="Afficher()"><label for="">Afficher le mot de passe</label>
         </div> 
         <div class="form-group pt-2">
             <button class="btn btn-success" type="submit">Se connecter</button>

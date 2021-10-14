@@ -13,7 +13,7 @@
             
     }
     ?>
-    <form action="./employerDashboard.php" method="post" enctype="multipart/form-data" >
+    <form action="./employerDashboard.php?addBook=1" method="post" enctype="multipart/form-data" >
                     <div class="form-group pt-2">
                         <label for="contactForm1">Titre *</label>
                         <input type="text" class="form-control" id="contactForm1" name="title" placeholder="Titre du livre" <?php if(!empty($return) && $return === false) {echo 'value="'.$_POST['title'].'"';} ?>>

@@ -1,5 +1,4 @@
 <?php
-
 function check_mdp_format($mdp)
 {
 	$majuscule = preg_match('@[A-Z]@', $mdp);
@@ -104,10 +103,11 @@ function authenticateUser($pdo){
 
                         if ($result['role'] === 'habitant'){
                             header('Location: ./connectedUser.php');
+                            echo 'RedirectionUser()';
 
                         }elseif($result['role'] === 'employer'){
                             header('Location: ./employerDashboard.php');
-
+                            echo '<script>RedirectionEmployer()</script> ';
                         }else{
                             echo '<div class="alert alert-danger" role="alert">
                                 Merci de contacter le webmaster
@@ -174,7 +174,7 @@ function mail_confirm(){
 
    
     $header = array(
-        'From' => htmlspecialchars($_POST['email']),
+        'From' => 'mediatheque@noresponse.fr',
         'Reply-To' => htmlspecialchars($_POST['email']) ,
         'Content-type' => 'text/html; charset=iso-8859-1'       
     );
@@ -186,8 +186,8 @@ function mail_confirm(){
 // on cherche a valider le compte de l'utilisateur manuelement
 function validity_accept($pdo){
     
-    if(!empty($_POST)){
-        $email = $_POST['email'];
+    if(!empty($_GET)){
+        $email = $_GET['email'];
         $request= "UPDATE habitant SET validity = '1' WHERE email = ?";
         $r = $pdo->prepare($request);
         $r->execute(array($email));
@@ -244,7 +244,7 @@ function verify_validity($pdo){
                 }
             }
             
-            echo '<form action="./employerDashboard.php" method="post" >
+            echo '<form action="./employerDashboard.php" method="get" >
             <input type="text" style="display : none;" name="email" value="'.$results[$i]['email'].'">
             <input type="text" style="display : none;" name="attente" value="1">
             <div>

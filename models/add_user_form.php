@@ -44,7 +44,8 @@
         </div>    
         <div class="form-group pt-2">
             <label for="contactForm1">Votre mot de passe</label> 
-            <input type="password" class="form-control" id="contactForm1" name="password" >
+            <input type="password" class="form-control" id="afPassword" name="password" >
+            <input type="checkbox" onclick="Afficher()"><label for="">Afficher le mot de passe</label>
             <label class="text-little" for="">Doit contenir au moins 8 caractères avec MAJ min et chiffre</label>
         </div> 
         <div class="form-group pt-2">
