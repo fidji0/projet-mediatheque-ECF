@@ -57,7 +57,7 @@ class Search{
         
        
 
-        $request = "SELECT id ,link_img, title ,  descriptions, auteur, genre, dispo, publication_date FROM book ";
+        $request = "SELECT id ,link_img, title ,  descriptions, auteur, genre, dispo FROM book ";
         
         if(!empty($_GET['search_book']) && $_GET['search_book'] == '1' && (!empty($_GET['title']) || !empty($_GET['genre']))){
             $request .= "WHERE genre LIKE ? AND  title LIKE ? LIMIT $nbr_element_par_page OFFSET $debut";
@@ -213,7 +213,7 @@ class Search{
     function detail_book($pdo){
         if(!empty($_GET['id'])){
             
-            $request = "SELECT id, link_img, title , descriptions, auteur, genre, dispo, publication_date  FROM book WHERE id = ?";
+            $request = "SELECT id, link_img, title , descriptions, auteur, genre, publication_date, dispo FROM book WHERE id = ?";
                 $d= $pdo->prepare($request);
                 $d->execute([$_GET['id']]);
 

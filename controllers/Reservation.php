@@ -85,7 +85,7 @@ class Reservation{
         $counts = $d->fetchAll(PDO::FETCH_ASSOC);
         
         $nbr_element_par_page = 2;
-        if (empty($_GET['page'])){
+        if (empty($_GET['page']) || is_numeric($_GET['page']) === false){
             $_GET['page']=1;
         }
         
@@ -135,6 +135,7 @@ class Reservation{
                     }
                 }
             }
+            // On recupere les informations à afficher 
             $request = "SELECT B.title, B.auteur , H.surname, H.firstname ,R.id ,  R.book FROM book AS B 
             INNER JOIN reservation as R INNER JOIN habitant AS H
             WHERE B.dispo = 'reserved' AND B.id = R.book AND R.recuperation  IS NULL AND H.id = R.reader";
@@ -156,8 +157,8 @@ class Reservation{
             
             $result = $r->fetchAll(PDO::FETCH_ASSOC);
             $count = count($result);
-            
-            echo '<table class="table_valid_book">
+            // création du tableau
+            echo '<div class="scroll"><table class="table_valid_book">
             <thead>
                 <tr>
                     <th>Titre</th>
@@ -236,7 +237,7 @@ class Reservation{
                 }
                 echo '</form></div></tr>';
             } 
-            echo '</tbody></table>';
+            echo '</tbody></table></div>';
 
             
         if($counts[0]['ctn'] > 0){
@@ -339,9 +340,10 @@ class Reservation{
           
 
         $nbr_element_par_page = 2;
-        if (empty($_GET['page'])){
+        if (empty($_GET['page']) || is_numeric($_GET['page']) === false){
             $_GET['page']=1;
         }
+        
         
         $debut = ($_GET['page']-1)*$nbr_element_par_page;
         $nombre_de_page = ceil($counts[0]['ctn']/$nbr_element_par_page);
@@ -369,7 +371,7 @@ class Reservation{
             $count = count($result);
             
 
-            echo '<table class="table_valid_book">
+            echo '<div class="scroll"><table class="table_valid_book">
             <thead>
                 <tr>
                     <th>Nom emprumteur</th>
@@ -459,7 +461,7 @@ class Reservation{
                 }
                 echo '</form></div></tr>';
             }
-            echo '</tbody></table>';
+            echo '</tbody></table></div>';
                  
         if($counts[0]['ctn'] != 0){
             echo '<div class="mt-5 "  style="width : 100%;"> 
@@ -631,7 +633,7 @@ class Reservation{
             
           
              
-            echo '<table class="table_historique">
+            echo '<div class="scroll"><table class="table_historique">
             <thead>
                 <tr>
                     <th>Titre</th>
@@ -679,7 +681,7 @@ class Reservation{
                 }
                 echo '</tr>';
             }
-            echo '</tbody></table>';
+            echo '</tbody></table></div>';
 
 
         

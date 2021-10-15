@@ -14,3 +14,6 @@ function RedirectionUser(){
 function RedirectionEmployer(){
     document.location.href="https://mediatheque.av-developpeur.fr/connectedUser.php"; 
 }
+function NotConnected(){
+    document.location.href="https://mediatheque.av-developpeur.fr/connect.php"; 
+}

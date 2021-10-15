@@ -10,10 +10,12 @@ $reserved = new Reservation();
 
 // On verifie que l'utilisateur est bien connecté
 if(!isset($_SESSION['email'])){
-    header('Location: ./connect.php');
+        header('Location: ./connect.php');
+        echo '<script> NotConnected() </script>';
 }else{
     if($_SESSION['role'] !== 'employer'){
         header('Location: ./index.php');
+        echo '<script> RedirectionUser() </script>';
     }
     
 $title = "Tableau de bord employé";

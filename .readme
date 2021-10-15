@@ -1,0 +1,49 @@
+# Table of Contents
+1. [General Info](#general-info)
+2. [Technologies](#technologies)
+3. [Installation](#Installation_sur_IONOS)
+4. [Installation_locale](#Installation_locale)
+### General Info
+***
+Bonjour je suis heureux de vous présenter mon projet ECF 
+Le site à été installer sur l'hebergeur ionos sur lequel j'heberge quelques projets.
+
+
+## Technologies
+***
+A list of technologies used within the project:
+* [PHP]: Version 7.4 
+* [MYSQL]: Version 5.7
+* [Extension PDO](https://example.com): Version 1234
+* [JAVASCRIPT]
+* [HTML5]
+* [CCS3]
+* [Bootstrap]
+* 
+## Installation_sur_IONOS
+***
+Pour une installation sur serveur ionos 
+```
+Créer tout d'abord ca base de donnée directement dans ionos afin d'avoir ses identifiant
+$ git clone git@github.com:fidji0/projet-mediatheque-ECF.git
+Dans le controller/PDOconnexion.php modifier les valeur $host $username et $password
+utiliser filezilla afin de copier les document a la base de votre serveur
+Une fois installer lancer la page de votre site et la base de donnée va se créer toute seule avec un identifiant de base
+utilisateur de base test@test.fr password: testEcf2021
+```
+Side information: To use the application in a special environment use ```lorem ipsum``` to start
+
+## Installation_locale
+***
+Pour une installation en locale 
+```
+Ouvrir le fichier www sur wamp
+ouvrir git bash
+$ git clone git@github.com:fidji0/projet-mediatheque-ECF.git
+lancer votre serveur.
+se connecter avec localhost 
+attention les mails automatique ne sont pas envoyer via wamp par défaut
+Une fois installer lancer la page de votre site et la base de donnée va se créer toute seule avec un identifiant de base
+utilisateur de base test@test.fr password: testEcf2021
+```
+Side information: To use the application in a special environment use ```lorem ipsum``` to start

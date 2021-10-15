@@ -8,7 +8,7 @@ require_once "./models/head.php";
 require_once "./models/header.php";
 
 $reservation = new Reservation();
-echo '<pre>';
+
 $reservation->historique_reservation($pdo);
 
 

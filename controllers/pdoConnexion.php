@@ -25,7 +25,7 @@ $pdo = new PDO($dsn, $username, $password);
      
     try{
         $pdo = new PDO($dsn, $username, $password);
-        $usercreate='CREATE TABLE habitant
+        $usercreate='CREATE TABLE IF NOT EXISTS habitant
         (
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
             firstname VARCHAR(255) NOT NULL,
@@ -43,7 +43,7 @@ $pdo = new PDO($dsn, $username, $password);
         $pdo->prepare($usercreate)->execute();
         echo '<br>table utilisateur creés';
 
-        $bookcreate='CREATE TABLE book
+        $bookcreate='CREATE TABLE IF NOT EXISTS book
         (
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
             title VARCHAR(255) NOT NULL,
@@ -59,7 +59,7 @@ $pdo = new PDO($dsn, $username, $password);
         $pdo->prepare($bookcreate)->execute();
         echo '<br> table livre crée';
 
-        $reservation='CREATE TABLE reservation
+        $reservation='CREATE TABLE IF NOT EXISTS reservation
         (
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
             reader INTEGER NOT NULL,
@@ -67,7 +67,9 @@ $pdo = new PDO($dsn, $username, $password);
             reservation DATE NOT NULL,
             recuperation DATE NULL,
             bookreturn DATE NULL,
-            statut VARCHAR(255) DEFAULT "reserved"
+            statut VARCHAR(255) DEFAULT "reserved",
+            FOREIGN KEY (reader) REFERENCES habitant(id),
+            FOREIGN KEY (book) REFERENCES book(id)
                     )';
 
         $pdo->prepare($reservation)->execute();

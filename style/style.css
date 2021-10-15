@@ -22,6 +22,12 @@
     display: flex;
     flex-wrap: nowrap;
 }
+.flexboxFooter{
+    display: flex;
+    justify-content: space-evenly;
+    height: 150px;
+    align-items: center;
+}
 .img_header {
     width: 100%;
     max-height: 250px;
@@ -38,6 +44,7 @@ a:hover {
 }
 .flexboxDashboard{
     display: flex;
+    gap: 20px;
     padding-top: 30px;
     padding-bottom: 30px;
     flex-wrap: wrap;
@@ -65,6 +72,7 @@ a:hover {
 }
 .flexboxIndex{
     display: flex;
+
     flex-wrap: wrap;
     justify-content: space-evenly;
     gap: 50px;
@@ -77,8 +85,10 @@ a:hover {
 }
 .flexboxIndex img{
     height: auto;
-    max-width: 500px;
-    width: 90%;
+    
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 .flexboxIndex .presentation{
     max-width: 900px;
@@ -86,7 +96,7 @@ a:hover {
     height: auto;
 }
 .form-perso{
-    background-color: lightblue;
+    background-color: #90AACB;
     padding: 20px;
     margin: 20px;
     border-radius: 20px;
@@ -148,11 +158,20 @@ a:hover {
     background-color: #CEE5D0;
     align-items: center;
 }
-.table_valid_book , .table_valid_book td , .table_valid_book th{
+.table_valid_book{
+    width: 95%; 
+    margin-left: auto;
+    margin-right: auto;   
+}
+.table_valid_book td , .table_valid_book th{
     border : 1px solid;
     padding: 20px;
     margin: 20px;
     
+}
+.scroll{
+    overflow: scroll;
+    margin: 20px;
 }
 .table_historique{
     width: 95%;
@@ -172,9 +191,7 @@ a:hover {
 .table_historique h5 , .table_historique th{
     font-size: 100%;
 }
-.table_valid_book{
-    width: 95%;
-}
+
 .tr-alert { 
     background-color : #EF907C;
 }
