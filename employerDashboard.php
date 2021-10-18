@@ -1,29 +1,31 @@
 <?php
 session_start();
 require_once "./controllers/pdoConnexion.php";
-require_once "./controllers/functionSearch.php";
 require_once "./controllers/functionAuthenticate.php";
 require_once "./controllers/Book.php";
 require_once "./controllers/Reservation.php";
 
-$reserved = new Reservation();
-
-// On verifie que l'utilisateur est bien connecté
-if(!isset($_SESSION['email'])){
-        header('Location: ./connect.php');
-        echo '<script> NotConnected() </script>';
-}else{
-    if($_SESSION['role'] !== 'employer'){
-        header('Location: ./index.php');
-        echo '<script> RedirectionUser() </script>';
-    }
-    
 $title = "Tableau de bord employé";
 $descriptionPage = "Bienvenue sur le site de la médiathèque de ..., nous sommes heureux de votre présence.";
 $page = 2;
 
-
 require_once "./models/head.php";
+$reserved = new Reservation();
+
+
+// On verifie que l'utilisateur est bien connecté
+if(!isset($_SESSION['email'])){
+        //header('Location: ./connect.php');
+        echo '<script> NotConnected() </script>';
+}else{
+    if($_SESSION['role'] !== 'employer'){
+        //header('Location: ./index.php');
+        echo '<script> RedirectionUser() </script>';
+    }
+    
+
+
+
 require_once "./models/header.php";
 $reserved->annulation_reservation($pdo);
     $reserved->valid_return_book($pdo);

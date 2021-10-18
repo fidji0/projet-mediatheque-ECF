@@ -9,11 +9,11 @@ function Afficher()
     } 
 } 
 function RedirectionUser(){
-    document.location.href="https://mediatheque.av-developpeur.fr/connectedUser.php"; 
+    document.location.href="./connectedUser.php"; 
   }
 function RedirectionEmployer(){
-    document.location.href="https://mediatheque.av-developpeur.fr/connectedUser.php"; 
+    document.location.href="./connectedUser.php"; 
 }
 function NotConnected(){
-    document.location.href="https://mediatheque.av-developpeur.fr/connect.php"; 
+    document.location.href="./connect.php"; 
 }

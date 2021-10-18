@@ -13,6 +13,7 @@ valid_email($pdo);
 // On verifie que l'utilisateur est bien connecté
 if(!isset($_SESSION['email'])){
     header('Location: ./connect.php');
+    echo '<script> NotConnected() </script>';
 }else{
 $page = 3;
 $title = "Cherchez et réservez vos livres";

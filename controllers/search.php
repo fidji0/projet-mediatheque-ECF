@@ -5,6 +5,7 @@ class Search{
         public $genre = '';
 
     public function genre($pdo){
+        if ($pdo){
         $request = "SELECT genre FROM book GROUP BY genre";
 
         $d = $pdo->prepare($request);
@@ -15,18 +16,19 @@ class Search{
         for($i = 0 ; $i < $count ; $i++){
             
             foreach($result[$i] as $key => $res){ 
-                echo '<option>'.$res.'</option>';
+                echo '<option>'.ucfirst($res).'</option>';
             }
         }
-    }
+    }}
     public function select_genre($pdo){
+        if ($pdo){
         try{  
         
         $request = "SELECT COUNT(id) AS ctn FROM book ";
         if(!empty($_GET['search_book']) && $_GET['search_book'] == '1' && ((!empty($_GET['title']) || !empty($_GET['genre'])))){
             $title = $_GET['title'];
             $genre = $_GET['genre'];
-            $request .= "WHERE genre LIKE ? AND title LIKE ?";
+            $request .= "WHERE genre LIKE ? AND title LIKE ? ";
             $d = $pdo->prepare($request);
             $d->execute(['%'.$_GET['genre'].'%','%'.$_GET['title'].'%']);
             
@@ -46,7 +48,7 @@ class Search{
              mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
          }
         // creation de la pagination
-        $nbr_element_par_page = 5;
+        $nbr_element_par_page = 10;
         if (empty($_GET['page'])){
             $_GET['page']=1;
         }
@@ -60,11 +62,11 @@ class Search{
         $request = "SELECT id ,link_img, title ,  descriptions, auteur, genre, dispo FROM book ";
         
         if(!empty($_GET['search_book']) && $_GET['search_book'] == '1' && (!empty($_GET['title']) || !empty($_GET['genre']))){
-            $request .= "WHERE genre LIKE ? AND  title LIKE ? LIMIT $nbr_element_par_page OFFSET $debut";
+            $request .= "WHERE genre LIKE ? AND  title LIKE ? ORDER BY title LIMIT $nbr_element_par_page OFFSET $debut ";
             $r = $pdo->prepare($request);
             $r->execute(array('%'.$_GET['genre'].'%','%'.$_GET['title'].'%'));
         }else{
-            $request .= "LIMIT $nbr_element_par_page OFFSET $debut";
+            $request .= "ORDER BY title LIMIT $nbr_element_par_page OFFSET $debut";
             $r = $pdo->prepare($request);
             $r->execute();
         }
@@ -85,16 +87,16 @@ class Search{
                 if(!empty($result)){
                 switch ($key) {
                     case 'title' :
-                        if(strlen($result) >= 10){
+                        if(strlen($result) >= 20){
                             echo '<div class="p-2 align-center">
                             <h5>
-                            <a href="./connectedUser.php?id='.$id.'">'.substr(ucfirst($result),0,10).' ...</a>
+                            <a href="./connectedUser.php?id='.$id.'">'.substr(ucfirst($result),0,20).'...</a>
                             </h5>
                             </div>' ;}
-                        elseif(strlen($result) < 10){
+                        elseif(strlen($result) < 20){
                             echo '<div class="p-2 align-center">
                             <h5>
-                            <a href="./connectedUser.php?id='.$id.'">'.substr(ucfirst($result),0,10).' ...</a>
+                            <a href="./connectedUser.php?id='.$id.'">'.ucfirst($result).'</a>
                             </h5>
                             </div>';
                         }
@@ -208,10 +210,11 @@ class Search{
             </nav>
             </div>';
         }
-        
+    }
     }
     function detail_book($pdo){
-        if(!empty($_GET['id'])){
+        
+        if(!empty($_GET['id']) && $pdo){
             
             $request = "SELECT id, link_img, title , descriptions, auteur, genre, publication_date, dispo FROM book WHERE id = ?";
                 $d= $pdo->prepare($request);

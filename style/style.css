@@ -1,9 +1,13 @@
+@font-face {
+    font-family: "biblio";
+    src: url("Nightmare\ Station.otf");
+  }
 .flexboxheader{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     background-color: #90AACB;
-    height: 100px;
+    height: auto;
 }
 .flexboxheader h1{
     vertical-align: middle;
@@ -245,4 +249,13 @@ a:hover {
 .text-little {
     font-size: 0.9rem;
     font-style: italic;
+}
+
+
+  .h1Tittle {
+    margin-top: 0.5rem;
+    font-size: 4rem;
+    font-family: biblio ;
+    text-align: center;
+    color: azure;
 }

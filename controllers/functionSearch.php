@@ -1,1 +1,0 @@
-<a href="./connectedUser.php?id='.$id.'"></a>

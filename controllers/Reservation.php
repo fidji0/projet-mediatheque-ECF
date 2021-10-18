@@ -6,7 +6,7 @@ class Reservation{
         private $reservation = 'reservation';
 
     public function reserved_book($pdo){
-
+        if ($pdo){
         // je verifie l'existence de $get dispo
         if (!empty($_GET['dispo'])){
             
@@ -56,10 +56,10 @@ class Reservation{
             }
             }
         }
-    }
+    }}
     // permet de valider la récupération d'un livre 
     public function recuperation_book($pdo){
-       
+        if ($pdo){
         // creation de la pagination
         $request = "SELECT COUNT(R.id) AS ctn FROM book AS B 
         INNER JOIN reservation as R INNER JOIN habitant AS H
@@ -312,10 +312,10 @@ class Reservation{
             echo 'Une erreur est survenue le webmaster à été avisé';
              mail('contact@av.developpeur.fr', ' erreur php', $e);
         }
-    }
+    }}
     // enregistre un retour et affiche les livres a retournés
     public function search_return_book($pdo){
-
+        if ($pdo){
         $request = "SELECT COUNT(R.id) AS ctn
         FROM habitant AS H INNER JOIN book AS B INNER JOIN reservation AS R 
         WHERE R.reader = H.id AND R.book = B.id AND R.statut = 'emprunter' AND B.dispo = 'emprunter'";
@@ -538,9 +538,10 @@ class Reservation{
             echo 'Une erreur est survenue le webmaster à été avisé';
              mail('contact@av.developpeur.fr', ' erreur php', $e);
         }
-        
+    }
     }
     public function valid_return_book($pdo){
+        if ($pdo){
         if (!empty($_GET['returnid'])){
             $request = "UPDATE book SET dispo = 'disponible' WHERE dispo = 'emprunter' AND reserveid = ? ;
             UPDATE reservation SET bookreturn = DATE(NOW()) , statut = 'terminer' WHERE id = ? AND statut = 'emprunter' AND bookreturn IS NULL";
@@ -548,10 +549,10 @@ class Reservation{
             $r = $pdo->prepare($request);
             $r->execute(array($_GET['returnid'], $_GET['returnid']));
         }
-    }
+    }}
 
     public function annulation_reservation($pdo){
-        
+        if ($pdo){
         // Récupération des livres reservés avec une date supérieur a 3 jour
         $request = "SELECT id , book , DATEDIFF ( DATE(NOW()) , reservation ) AS diff FROM reservation WHERE DATEDIFF ( DATE(NOW()) , reservation ) > 3 AND statut = 'reserved'";
         $r = $pdo->prepare($request);
@@ -588,6 +589,7 @@ class Reservation{
             }
         
         }
+        }
 
     }
     private function echo($value){
@@ -597,6 +599,7 @@ class Reservation{
     }
     
     public function en_retard($pdo){
+        if ($pdo){
         $request = "SELECT H.surname , H.firstname , H.email ,  B.title , B.auteur , R.id  AS d
         FROM habitant AS H INNER JOIN book AS B INNER JOIN reservation AS R 
         WHERE DATEDIFF ( DATE(NOW()) , R.recuperation)> '21' AND R.reader = H.id AND R.book = B.id AND R.statut = 'emprunter' AND B.dispo = 'emprunter'";
@@ -619,8 +622,12 @@ class Reservation{
              mail('contact@av.developpeur.fr', ' erreur php', $e);
         }
     }
+    }
+
+
     // historique de chaque utilisateur qui d'affiche sur la page mon compte
     public function historique_reservation($pdo){
+        if ($pdo){
         try{ 
             $request = 'SELECT B.title, B.auteur, DATE_FORMAT(R.reservation, "%d/%m/%Y") AS reservation , DATE_FORMAT(R.bookreturn, "%d/%m/%Y") AS bookreturn , DATE_FORMAT(DATE_ADD(R.recuperation, INTERVAL 21 DAY) , "%d/%m/%Y") AS recuperation , 
             DATEDIFF(DATE_ADD(R.recuperation, INTERVAL 21 DAY) , DATE(NOW())) AS d FROM book AS B INNER JOIN reservation AS R INNER JOIN habitant AS H 
@@ -646,7 +653,7 @@ class Reservation{
             ';
             for($i = 0 ; $i < $count ; $i++){
                 
-                $return_date = $result[$i]['recuperation'];
+                $return_date = $result[$i]['bookreturn'];
                 $d = $result[$i]['d'];
                 
                 if($d < 0 && empty($return_date)){
@@ -669,7 +676,7 @@ class Reservation{
                                 if($return === null && $d >= 0){
                                     echo '<td><div class="align-center"><h5>A retourner avant le <br>'.$return_date.' </h5></div></td>';
                                     break;
-                                }elseif($d < 0 && empty($return_date)){
+                                }elseif($d < 0 && !isset($return_date)){
                                     echo '<td><div class="align-center"><h5>EN RETARD <br>'.$return_date.' </h5></div></td>';
                                     break;
                                 }else{
@@ -695,8 +702,11 @@ class Reservation{
         }
 
     }
+    }
     public function habitant_retard_notif($pdo){
+        if ($pdo){
         try{
+            
         $request = 'SELECT DATEDIFF(DATE_ADD(R.recuperation, INTERVAL 21 DAY) , DATE(NOW())) AS d FROM book AS B INNER JOIN reservation AS R INNER JOIN habitant AS H 
             WHERE R.reader = ? AND H.id = R.reader AND B.id = R.book AND R.recuperation IS NOT NULL AND R.bookreturn IS NULL ORDER BY d ';
             $r = $pdo->prepare($request);
@@ -724,6 +734,5 @@ class Reservation{
             echo 'Une erreur est survenue le webmaster à été avisé';
              mail('contact@av.developpeur.fr', ' erreur php', $e);
         }
-    }
-
-}
+        }
+}}

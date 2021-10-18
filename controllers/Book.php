@@ -20,6 +20,7 @@ class Book{
     }
     
     function add_book($pdo){
+        if ($pdo){
         // On verifie que le formulaire à été rempli correctement
         if(!empty($this->title) && !empty($_FILES['image']) && !empty($this->descriptions) && !empty($this->auteur)&& !empty($this->genre)){
            
@@ -67,4 +68,4 @@ class Book{
 
         }
     }
-}
+}}

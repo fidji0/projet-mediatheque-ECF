@@ -1,30 +1,8 @@
 <?php
+
+require_once "./controllers/pdoConnexion.php";
 try{
-$dsn = 'mysql:host=localhost;dbname=mediatheque';
-$username = 'root';
-$password = '';
 
-$pdo = new PDO($dsn, $username, $password);
-
-}catch(PDOException $e){
-    try{
-        $dsni = 'mysql:host=localhost';
-        $pdp = new PDO($dsni, $username, $password);
-        $requete = "CREATE DATABASE IF NOT EXISTS `mediatheque` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
-        
-        $pdp->prepare($requete)->execute();
-        echo "base de donée créée";
-        }
-        catch (PDOException $e){
-            echo 'Une erreur est survenue le webmaster à été avisé';
-             mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
-        }catch (Exception $e){
-            echo 'Une erreur est survenue le webmaster à été avisé';
-             mail('contact@av.developpeur.fr', ' erreur php', $e);
-        }
-    
-    try{
-        $pdo = new PDO($dsn, $username, $password);
         $usercreate='CREATE TABLE IF NOT EXISTS habitant
         (
             id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -74,11 +52,14 @@ $pdo = new PDO($dsn, $username, $password);
 
         $pdo->prepare($reservation)->execute();
         
+        $admin = "INSERT INTO habitant (`id`, `firstname`, `surname`, `adress`, `zipcode`, `city`, `email`, `date_of_birth`, `password`, `role`, `validity`, `verify_email`) VALUES 
+        (101, 'admin' , 'admin' , 'admin', 00000, 'admin' ,  'admin@admin.fr' ,DATE(NOW()),'$2y$10$yo3gg8aZzU00AT7hIqysVujL8na61oPKi.XFkBCZlI9L03JgOqRVC','employer',1,1)";
+
+        $pdo->prepare($admin)->execute();
     }catch(PDOException $e){
-        echo 'Une erreur est survenue le webmaster à été avisé';
+        echo 'Une erreur est survenue le webmaster à été avisé  ';
              mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
     }catch (Exception $e){
         echo 'Une erreur est survenue le webmaster à été avisé';
          mail('contact@av.developpeur.fr', ' erreur php', $e);
     }
-}

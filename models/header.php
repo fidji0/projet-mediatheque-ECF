@@ -4,7 +4,7 @@
 ?>
 <header >
     <div class="flexboxheader">
-        <a href="./"><h1>Mediatheque de La Chapelle-Curreaux</h1></a>
+        <a href="./"><h1 class="h1Tittle">Médiatheque de La Chapelle-Curreaux</h1></a>
     </div>
     
         

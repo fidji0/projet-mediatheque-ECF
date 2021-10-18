@@ -7,6 +7,10 @@ require_once "./controllers/Reservation.php";
 require_once "./models/head.php";
 require_once "./models/header.php";
 
+if(!isset($_SESSION['email'])){
+    //header('Location: ./connect.php');
+    echo '<script> NotConnected() </script>';
+}
 $reservation = new Reservation();
 
 $reservation->historique_reservation($pdo);

@@ -18,7 +18,7 @@ function check_mdp_format($mdp)
 function createUser($pdo){
     check_mdp_format($_POST['password']);
 
-
+    if ($pdo){
     if (!empty($_POST)){
         
         if(check_mdp_format($_POST['password'])){
@@ -30,7 +30,7 @@ function createUser($pdo){
                 $zipcode = htmlspecialchars($_POST['zipcode']);
                 $city = htmlspecialchars($_POST['city']);
                 $date_of_birth = htmlspecialchars($_POST['date_of_birth']);
-                $password = password_hash(htmlspecialchars($_POST['password']),PASSWORD_BCRYPT);      
+                $password = password_hash($_POST['password'],PASSWORD_BCRYPT);      
                 
                 
                 if($firstname && $surname && $email && $date_of_birth && $password){
@@ -74,11 +74,12 @@ function createUser($pdo){
         }
     }
 }
-
+}
 // Je verifie la connection en récupérant les données du formulaire
 function authenticateUser($pdo){
+    if ($pdo){
     if(!empty($_POST)){
-
+        try{
         // On récupère les valeurs du formulaire en se protégeant des injection SSL
         $email = htmlspecialchars($_POST['email']);
         $password = htmlspecialchars($_POST['password']);
@@ -103,7 +104,7 @@ function authenticateUser($pdo){
 
                         if ($result['role'] === 'habitant'){
                             header('Location: ./connectedUser.php');
-                            echo 'RedirectionUser()';
+                            echo '<script>RedirectionUser()</script>';
 
                         }elseif($result['role'] === 'employer'){
                             header('Location: ./employerDashboard.php');
@@ -142,11 +143,15 @@ function authenticateUser($pdo){
                 L\'adresse email et/ou le mot de passe est invalide!
             </div>';}
         } 
+    }catch(PDOException $e){
+        echo 'Une erreur c\'est produite';
     }
-    
+    }
+}   
 }
 
 function valid_email($pdo){
+    if ($pdo){
     if(isset($_GET['email'])){
 
         $email = $_GET['email'];
@@ -155,11 +160,12 @@ function valid_email($pdo){
         SET verify_email = '1'
         WHERE email = '$email'";
 
-        $pdo->query($request);
+        $r = $pdo->prepare($request);
+        $r->execute();
     }else{
 
     }
-}
+}}
 function mail_confirm(){
     
     $to = htmlspecialchars($_POST['email']);
@@ -168,7 +174,7 @@ function mail_confirm(){
     <p>Bonjour<br><br>
     Nous avons le plaisir de vous annoncer que nous avons bien reçu votre demande d\'inscription<br><br>
     Nous vous remercions de bien vouloir valider votre adresse email en cliquant sur le lien ci-dessous <br><br>
-    <a href="www.mediatheque.av-developpeur.fr/inscription.php?email='.$_POST['email'].'">Merci de valider votre email</a>';
+    <a href="https://mediatheque.av-developpeur.fr/connect.php?email='.$_POST['email'].'">Merci de valider votre email</a>';
     
     
 
@@ -180,12 +186,12 @@ function mail_confirm(){
     );
 
     mail($to, $subject, $message, $header);
-    echo $message;
+    echo '<a href="./connect.php?email='.$_POST['email'].'">Merci de valider votre email</a>';
 }
 
 // on cherche a valider le compte de l'utilisateur manuelement
 function validity_accept($pdo){
-    
+    if ($pdo){ 
     if(!empty($_GET)){
         $email = $_GET['email'];
         $request= "UPDATE habitant SET validity = '1' WHERE email = ?";
@@ -193,8 +199,9 @@ function validity_accept($pdo){
         $r->execute(array($email));
         
     }
-}
+}}
 function en_attente($pdo){
+    if ($pdo){
     $request = 'SELECT surname , firstname , email , adress ,  city , zipcode FROM habitant WHERE validity = 0 AND verify_email = 1';
     $r = $pdo->query($request);
     $r->execute();
@@ -205,15 +212,15 @@ function en_attente($pdo){
     $count = count($results);
 
     echo $count;
-}
+}}
 function verify_validity($pdo){
+    if ($pdo){
     validity_accept($pdo);
     $request = 'SELECT surname , firstname , email , adress ,  city , zipcode FROM habitant WHERE validity = 0 AND verify_email = 1';
     $r = $pdo->query($request);
     $r->execute();
     $results = $r->fetchAll(PDO::FETCH_ASSOC);
 
-    
     
     $count = count($results);
     if ($count > 0){
@@ -255,4 +262,5 @@ function verify_validity($pdo){
         }
         echo '</div>';
     }
+}
 }
