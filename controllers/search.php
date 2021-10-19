@@ -216,7 +216,7 @@ class Search{
         
         if(!empty($_GET['id']) && $pdo){
             
-            $request = "SELECT id, link_img, title , descriptions, auteur, genre, publication_date, dispo FROM book WHERE id = ?";
+            $request = "SELECT id, link_img, title , descriptions, auteur, genre, DATE_FORMAT(publication_date, '%m/%Y') AS publication_date , dispo FROM book WHERE id = ?";
                 $d= $pdo->prepare($request);
                 $d->execute([$_GET['id']]);
 

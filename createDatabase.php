@@ -52,12 +52,15 @@ try{
 
         $pdo->prepare($reservation)->execute();
         
-        $admin = "INSERT INTO habitant (`id`, `firstname`, `surname`, `adress`, `zipcode`, `city`, `email`, `date_of_birth`, `password`, `role`, `validity`, `verify_email`) VALUES 
-        (101, 'admin' , 'admin' , 'admin', 00000, 'admin' ,  'admin@admin.fr' ,DATE(NOW()),'$2y$10$yo3gg8aZzU00AT7hIqysVujL8na61oPKi.XFkBCZlI9L03JgOqRVC','employer',1,1)";
 
-        $pdo->prepare($admin)->execute();
+        $password = password_hash('Test1234',PASSWORD_BCRYPT);
+        $admin = "INSERT INTO habitant (`id`, `firstname`, `surname`, `adress`, `zipcode`, `city`, `email`, `date_of_birth`, `password`, `role`, `validity`, `verify_email`) VALUES 
+        (1, 'admin' , 'admin' , 'admin', 00000, 'admin' ,  'admin@admin.fr' ,DATE(NOW()),?,'employer',1,1)";
+
+        $r = $pdo->prepare($admin);
+        $r->execute([$password]);
     }catch(PDOException $e){
-        echo 'Une erreur est survenue le webmaster à été avisé  ';
+        echo 'Une erreur est survenue le webmaster à été avisé ';
              mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
     }catch (Exception $e){
         echo 'Une erreur est survenue le webmaster à été avisé';

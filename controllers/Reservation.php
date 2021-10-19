@@ -629,9 +629,13 @@ class Reservation{
     public function historique_reservation($pdo){
         if ($pdo){
         try{ 
-            $request = 'SELECT B.title, B.auteur, DATE_FORMAT(R.reservation, "%d/%m/%Y") AS reservation , DATE_FORMAT(R.bookreturn, "%d/%m/%Y") AS bookreturn , DATE_FORMAT(DATE_ADD(R.recuperation, INTERVAL 21 DAY) , "%d/%m/%Y") AS recuperation , 
-            DATEDIFF(DATE_ADD(R.recuperation, INTERVAL 21 DAY) , DATE(NOW())) AS d FROM book AS B INNER JOIN reservation AS R INNER JOIN habitant AS H 
-            WHERE R.reader = ? AND H.id = R.reader AND B.id = R.book AND R.recuperation IS NOT NULL ORDER BY d DESC ';
+            $request = 'SELECT B.title, B.auteur, DATE_FORMAT(R.reservation, "%d/%m/%Y") AS reservation ,
+             DATE_FORMAT(R.bookreturn, "%d/%m/%Y") AS bookreturn ,
+            DATE_FORMAT(DATE_ADD(R.recuperation, INTERVAL 21 DAY) ,"%d/%m/%Y") AS recuperation , 
+            DATEDIFF(DATE_ADD(R.recuperation, INTERVAL 21 DAY) ,DATE(NOW())) AS d  ,
+            DATE_FORMAT(DATE_ADD(R.reservation, INTERVAL 3 DAY) , "%d/%m/%Y" ) AS av,
+             R.recuperation AS recup FROM book AS B INNER JOIN reservation AS R INNER JOIN habitant AS H 
+            WHERE R.reader = ? AND H.id = R.reader AND B.id = R.book  ORDER BY reservation DESC ';
             $r = $pdo->prepare($request);
             $r->execute([$_SESSION['id']]);
             $result = $r->fetchAll(PDO::FETCH_ASSOC);
@@ -645,7 +649,7 @@ class Reservation{
                 <tr>
                     <th>Titre</th>
                     <th>Auteur</th>
-                    <th>Date de retour</th>
+                    <th>Etat</th>
                 </tr>
             </thead>
             <tbody>
@@ -654,7 +658,11 @@ class Reservation{
             for($i = 0 ; $i < $count ; $i++){
                 
                 $return_date = $result[$i]['bookreturn'];
+                //var_dump($return_date);
                 $d = $result[$i]['d'];
+                $recup = $result[$i]['recup'];
+                $av = $result[$i]['av'];
+                $rec=  $result[$i]['recuperation'];
                 
                 if($d < 0 && empty($return_date)){
                     echo '<tr class=" tr-alert">';
@@ -673,11 +681,15 @@ class Reservation{
                                 break;
                            
                             case 'bookreturn' :
-                                if($return === null && $d >= 0){
-                                    echo '<td><div class="align-center"><h5>A retourner avant le <br>'.$return_date.' </h5></div></td>';
+                                
+                                if($return === null && $d >= 0 && !empty($recup)){
+                                    echo '<td><div class="align-center"><h5>A retourner avant le <br>'.$rec.' </h5></div></td>';
                                     break;
-                                }elseif($d < 0 && !isset($return_date)){
-                                    echo '<td><div class="align-center"><h5>EN RETARD <br>'.$return_date.' </h5></div></td>';
+                                }elseif($d < 0 && !isset($return)){
+                                    echo '<td><div class="align-center"><h5>EN RETARD <br> devait être rendu avant le </br>'.$rec.' </h5></div></td>';
+                                    break;
+                                }elseif(empty($return) && empty($recup)){
+                                    echo '<td><div class="align-center"><h5>A récupérer avant le <br>'.$av.' </h5></div></td>';
                                     break;
                                 }else{
                                 echo '<td><div class="align-center"><h5>Rendu</h5></div></td>';
@@ -694,7 +706,7 @@ class Reservation{
         
 
         }catch(PDOException $e){
-            echo 'Une erreur est survenue le webmaster à été avisé';
+            echo 'Une erreur est survenue le webmaster à été avisé'. $e;
             mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
         }catch (Exception $e){
             echo 'Une erreur est survenue le webmaster à été avisé';
