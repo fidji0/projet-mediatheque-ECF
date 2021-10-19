@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 if($_GET['disconnected'] == 1){
     session_unset();

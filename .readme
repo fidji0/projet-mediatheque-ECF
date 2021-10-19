@@ -28,10 +28,13 @@ Créer tout d'abord ca base de donnée directement dans ionos afin d'avoir ses i
 $ git clone git@github.com:fidji0/projet-mediatheque-ECF.git
 Dans le controller/PDOconnexion.php modifier les valeur $host $username et $password
 utiliser filezilla afin de copier les document a la base de votre serveur
-Une fois installer lancer la page de votre site et la base de donnée va se créer toute seule avec un identifiant de base
-utilisateur de base test@test.fr password: testEcf2021
+Une fois installer lancer la page de votre site 
+Si vous avez un message d'erreur en haut cela signifie que la connexion a la base de donée n'est pas bonne 
+Sinon aller sur "votre domaine"/createDatabase.php et la base de donnée va se créer toute seule avec un identifiant de base
+utilisateur de base admin@admin.fr password: Test1234
+Vous pouvez désormais ajouter des livres. 
 ```
-Side information: To use the application in a special environment use ```lorem ipsum``` to start
+
 
 ## Installation_locale
 ***
@@ -40,10 +43,11 @@ Pour une installation en locale
 Ouvrir le fichier www sur wamp
 ouvrir git bash
 $ git clone git@github.com:fidji0/projet-mediatheque-ECF.git
+IMPORTANT bien copié les fichier à la racine.
 lancer votre serveur.
 se connecter avec localhost 
 attention les mails automatique ne sont pas envoyer via wamp par défaut
 Une fois installer lancer la page de votre site et la base de donnée va se créer toute seule avec un identifiant de base
-utilisateur de base test@test.fr password: testEcf2021
-```
-Side information: To use the application in a special environment use ```lorem ipsum``` to start
+utilisateur de base admin@admin.fr password: Test1234
+Vous pouvez désormais ajouter des livres
+

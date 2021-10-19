@@ -48,7 +48,7 @@ class Search{
              mail('contact@av.developpeur.fr', ' erreur requette sql', $e);
          }
         // creation de la pagination
-        $nbr_element_par_page = 10;
+        $nbr_element_par_page = 12;
         if (empty($_GET['page'])){
             $_GET['page']=1;
         }
